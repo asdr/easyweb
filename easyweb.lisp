@@ -1,4 +1,21 @@
 (defpackage :easyweb
+  (:use #:cl #:hunchentoot)
+  (:export #:map-urls))
+
+(in-package :easyweb)
+
+(defun map-urls (&rest mappings)
+  (and (every #'listp (mapcar #'identity mappings))
+       (not (setf *dispatch-table* nil))
+       (mapc #'(lambda(m)
+		 (destructuring-bind (pattern . view) m
+		   (format t "~%~%~S : ~S" pattern view)
+		   (push (create-regex-dispatcher pattern view)
+			 *dispatch-table*)))
+	     mappings)))
+
+
+(defpackage :easyweb.pagen
   (:use #:cl #:dsgner)
   (:export #:a #:abbr #:acronym #:address #:applet #:b #:base #:basefont 
 	   #:bdo #:big #:blockquote #:body #:br #:button #:caption #:center #:cite 
@@ -10,7 +27,7 @@
 	   #:strike #:strong #:style #:sub #:sup #:table #:tbody #:td #:textarea #:tfoot
 	   #:th #:thead #:title #:tr #:tt #:u #:ul #:var #:xmp #:doctype #:<!--))
   
-(in-package :easyweb)
+(in-package :easyweb.pagen)
 
 (defmacro :doctype ((&key (type :xhtml1.0\:strict)) &body body)
   `(format nil "~A~A" 

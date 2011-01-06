@@ -8,7 +8,7 @@
 (defsystem #:easyweb
     :name "easyweb"
     :serial t
-    :depends-on (#:dsgner)
+    :depends-on (#:dsgner #:hunchentoot)
     :components ((:file "easyweb")))
 
 
