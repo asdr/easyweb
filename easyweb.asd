@@ -1,5 +1,14 @@
+(in-package :common-lisp-user)
 
-(asdf:defsystem #:easyweb
-  :depends-on (#:dsgner)
-  :serial t
-  :components ((:file "easyweb")))
+(defpackage :easyweb-asd
+  (:use #:cl #:asdf))
+
+(in-package :easyweb-asd)
+
+(defsystem #:easyweb
+    :name "easyweb"
+    :serial t
+    :depends-on (#:dsgner)
+    :components ((:file "easyweb")))
+
+

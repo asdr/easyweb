@@ -1,8 +1,16 @@
-(defpackage #:easyweb
+(defpackage :easyweb
   (:use #:cl #:dsgner)
-  (:shadowing-import-from #:dsgner))
-
-(in-package #:easyweb)
+  (:export #:a #:abbr #:acronym #:address #:applet #:b #:base #:basefont 
+	   #:bdo #:big #:blockquote #:body #:br #:button #:caption #:center #:cite 
+	   #:code #:col #:colgroup #:dd #:del #:dfn #:dir #:div #:dl #:dt #:em #:fieldset 
+	   #:font #:form #:frame #:frameset #:h1 #:h2 #:h3 #:h4 #:h5 #:h6 #:head #:hr
+	   #:html #:i #:iframe #:img #:input #:ins #:isindex #:kbd #:label #:legend #:li 
+	   #:link #:map #:menu #:meta #:noframes #:noscript #:object #:ol #:optgroup
+	   #:option #:p #:param #:pre #:q #:s #:samp #:script #:select #:small #:span 
+	   #:strike #:strong #:style #:sub #:sup #:table #:tbody #:td #:textarea #:tfoot
+	   #:th #:thead #:title #:tr #:tt #:u #:ul #:var #:xmp #:doctype #:<!--))
+  
+(in-package :easyweb)
 
 (defmacro :doctype ((&key (type :xhtml1.0\:strict)) &rest body)
   `(format nil "~A~A" 
