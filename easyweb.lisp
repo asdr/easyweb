@@ -12,7 +12,7 @@
   
 (in-package :easyweb)
 
-(defmacro :doctype ((&key (type :xhtml1.0\:strict)) &rest body)
+(defmacro :doctype ((&key (type :xhtml1.0\:strict)) &body body)
   `(format nil "~A~A" 
 	   ,(case type
 	      (:html4.01\:strict
@@ -32,7 +32,7 @@
 	   (progn
 	     ,@body)))
 
-(defmacro :<!-- ((&key (type :regular)) &rest body)
+(defmacro :<!-- ((&key (type :regular)) &body body)
   (let ((opentag "")
 	(closetag "")
 	(stream (gensym))
