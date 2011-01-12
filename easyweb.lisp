@@ -54,10 +54,21 @@
   ;;may be platform dependent code
   ;;but i still need it
   ;;return the parameter list of given function
-  
-  ;;as an aexample the output for url-handler is:
-  (list (make-symbol (string-uppercase "LINK"))))
-  
+(let ((ns (easyweb.html::empty-string))
+	       (lambda-list nil))
+	   (with-output-to-string (stream ns)
+	     (let ((*standard-output* stream))
+	       (describe fn)))
+	   (with-input-from-string (str ns)
+	     (do ((line (read-line str nil 'eof) (read-line str nil 'eof)))
+		 ((eq line 'eof) lambda-list)
+	       (let ((start (search "Lambda-list: " line :test #'string=)))
+		 (when start
+		   (setf lambda-list (subseq line (+ start
+						     (length "Lambda-list: "))))))))
+	   lambda-list))
+
+
 (defmacro map-urls (prefix &body body)
     `(progn
        ,@(mapcar #'(lambda (mapping)
