@@ -57,7 +57,7 @@
   ;;return the parameter list of given function
   
   ;;as an aexample the output for url-handler is:
-  nil)
+  (list (make-symbol "LINK")))
   
 (defmacro map-urls (prefix &body body)
     `(progn
