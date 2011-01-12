@@ -2,8 +2,7 @@
 
 (defpackage :easyweb
   (:use #:cl #:hunchentoot)
-  (:export #:link
-           #:map-urls
+  (:export #:map-urls
 	   #:start-server))
 
 (in-package :easyweb)
@@ -57,7 +56,7 @@
   ;;return the parameter list of given function
   
   ;;as an aexample the output for url-handler is:
-  (list (make-symbol "LINK")))
+  (list (make-symbol (string-uppercase "LINK"))))
   
 (defmacro map-urls (prefix &body body)
     `(progn
