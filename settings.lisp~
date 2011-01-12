@@ -1,8 +1,0 @@
-(in-package :common-lisp-user)
-
-(defpackage :easyweb.settings
-  (:use #:cl))
-
-(in-package :easyweb.settings)
-
-;;available applications
