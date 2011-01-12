@@ -2,7 +2,8 @@
 
 (defpackage :easyweb
   (:use #:cl #:hunchentoot)
-  (:export #:mapping
+  (:export #:link
+           #:map-urls
 	   #:start-server))
 
 (in-package :easyweb)
@@ -50,10 +51,35 @@
 	   (setf *dispatch-table* nil)
 	   (mapc #'destruct-mapping mappings)))|#
 
-(defmacro mapping (prefix &body body)
-  `(let ()
-    ))
-     
+(defun get-lambda-list (fn)
+  ;;may be platform dependent code
+  ;;but i still need it
+  ;;return the parameter list of given function
+  
+  ;;as an aexample the output for url-handler is:
+  nil)
+  
+(defmacro map-urls (prefix &body body)
+    `(progn
+       ,@(mapcar #'(lambda (mapping)
+                     (let* ((uri-part (car mapping))
+                            (type (car uri-part))
+                            (uri nil))
+                       (case type
+                         ((:regex :prefix :file :folder)
+                          (let* ((handler (cadr mapping))
+                                 (args (get-lambda-list handler))
+                                 (uri (format nil "~A~A" prefix (cadr uri-part))))
+                            `(define-easy-handler (,(gensym) :uri ,uri)
+                                                  ,args
+                                                  (,handler ,@(mapcan #'(lambda (arg)
+									  `(,(hunchentoot::convert-parameter (string-downcase arg) 'keyword) ,arg))
+								      args)))))
+                         (:prefix "prefix")
+                         (:file "file-")
+                         (:folder "folder")
+                         (otherwise "other"))))
+                 body)))
 
 (defun start-server (&key (port 8000))
   (defparameter *httpd* (start (make-instance 'acceptor :port port))))
