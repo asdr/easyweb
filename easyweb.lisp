@@ -7,67 +7,23 @@
 
 (in-package :easyweb)
 
-;;static file dispatcher?
-;;regex dispatcher?
-;;prefix dispatcher?
-;;folder dispatcher?
-;;
-;;GET and POST parameter pass??????
-#|(defmacro map-urls (prefix &body mappings)
-  (format t "~%~%URL Mapping")
-  (and (every #'listp (mapcar #'identity mappings))
-       (not (setf *dispatch-table* nil))
-       (mapc #'(lambda(m)
-		 (destructuring-bind (pattern . view) m
-		   (format t "~%~S..::..~S" pattern view)
-		   (push (create-regex-dispatcher (format nil "~A~A" prefix pattern) 
-						  view)
-			 *dispatch-table*)))
-	     mappings)))
-
-(defun mapping (prefix &rest mappings)
-  (labels ((destruct-mapping (lst)
-	     ;(format t "~A" lst)))
-	     (destructuring-bind ((pattern pattern-type) (view params)) lst
-	       (case pattern-type
-		 (:file
-		  (format t "file")
-		  )
-		 (:folder
-		  (format t "folder")
-		  )
-		 (:prefix
-		  (format t "prefix")
-		  (push (create-prefix-dispatcher (format nil "~A~A" prefix pattern) 
-						 view)
-			*dispatch-table*))
-		 (:regex
-		  (format t "~%~S..::..~S" pattern view)
-		  (push (create-regex-dispatcher (format nil "~A~A" prefix pattern) 
-						 view)
-			 *dispatch-table*)))
-	       )))
-	   (setf *dispatch-table* nil)
-	   (mapc #'destruct-mapping mappings)))|#
-
 (defun get-lambda-list (fn)
   ;;may be platform dependent code
   ;;but i still need it
   ;;return the parameter list of given function
-(let ((ns (easyweb.html::empty-string))
-	       (lambda-list nil))
-	   (with-output-to-string (stream ns)
-	     (let ((*standard-output* stream))
-	       (describe fn)))
-	   (with-input-from-string (str ns)
-	     (do ((line (read-line str nil 'eof) (read-line str nil 'eof)))
-		 ((eq line 'eof) lambda-list)
-	       (let ((start (search "Lambda-list: " line :test #'string=)))
-		 (when start
-		   (setf lambda-list (subseq line (+ start
-						     (length "Lambda-list: "))))))))
-	   lambda-list))
-
+  (let ((ns (dsgner::empty-string))
+	(lambda-list nil))
+    (with-output-to-string (stream ns)
+      (let ((*standard-output* stream))
+	(describe fn)))
+    (with-input-from-string (str ns)
+      (do ((line (read-line str nil 'eof) (read-line str nil 'eof)))
+	  ((eq line 'eof) lambda-list)
+	(let ((start (search "Lambda-list: " line :test #'string=)))
+	  (when start
+	    (setf lambda-list (subseq line (+ start
+					      (length "Lambda-list: "))))))))
+    lambda-list))
 
 (defmacro map-urls (prefix &body body)
     `(progn
@@ -76,19 +32,19 @@
                             (type (car uri-part))
                             (uri nil))
                        (case type
-                         ((:regex :prefix :file :folder)
-                          (let* ((handler (cadr mapping))
-                                 (args (get-lambda-list handler))
+                         (:regex "regular exp.")
+			 (:prefix "prefix")
+                         (:file "file-")
+                         (:folder "folder")
+                         (otherwise 
+			  (let* ((handler (cadr mapping))
+                                 (args nil #|(get-lambda-list handler)|#)
                                  (uri (format nil "~A~A" prefix (cadr uri-part))))
                             `(define-easy-handler (,(gensym) :uri ,uri)
                                                   ,args
                                                   (,handler ,@(mapcan #'(lambda (arg)
 									  `(,(hunchentoot::convert-parameter (string-downcase arg) 'keyword) ,arg))
-								      args)))))
-                         (:prefix "prefix")
-                         (:file "file-")
-                         (:folder "folder")
-                         (otherwise "other"))))
+								      args))))))))
                  body)))
 
 (defun start-server (&key (port 8000))

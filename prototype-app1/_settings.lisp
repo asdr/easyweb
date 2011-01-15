@@ -10,8 +10,9 @@
 
 ;;url dispatching should occur here
 (map-urls "/"
-  ((:regex "asdr") open-link)
-  ((:prefix "serdar") mervecigim)
-  ((:prefix "merve") mervecigim)
+  ((:std "") index-page)
+  ((:std "asdr") open-link)
+  ((:std "serdar") mervecigim)
+  ((:std "merve") mervecigim)
   ((:file "tmp/fileX" "/home/admin-o/pjs/easyweb/tmp/filex.x" "text/plain"))
   ((:folder "tmp/" "/home/asdr/admin-o/pjs/easyweb/" "text/plain")))
