@@ -3,7 +3,8 @@
 (defpackage :easyweb
   (:use #:cl #:hunchentoot)
   (:export #:map-urls
-	   #:start-server))
+	   #:server-start
+	   #:server-stop))
 
 (in-package :easyweb)
 
@@ -47,5 +48,9 @@
 								      args))))))))
                  body)))
 
-(defun start-server (&key (port 8000))
+(defun server-start (&key (port 8000))
   (defparameter *httpd* (start (make-instance 'acceptor :port port))))
+
+(defun server-stop ()
+  (stop *httpd*)
+  (setf *httpd* nil))
