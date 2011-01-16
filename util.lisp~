@@ -1,0 +1,12 @@
+(in-package :common-lisp-user)
+
+(defpackage :easyweb.util
+  (:use #:cl)
+  (:export #:enclose-string))
+
+(in-package :easyweb.util)
+
+;;in order to get around the issue with "describe" function,
+;;strings must be enclosed with double-quotes.
+(defun enclose-string (str)
+  (format nil "\"~A\"" str))

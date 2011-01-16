@@ -1,7 +1,9 @@
 (in-package :common-lisp-user)
 
 (defpackage :easyweb
-  (:use #:cl #:hunchentoot)
+  (:use #:cl
+	#:easyweb.util
+	#:hunchentoot)
   (:export #:map-urls
 	   #:server-start
 	   #:server-stop))
@@ -11,7 +13,7 @@
 (defun get-lambda-list (fn)
   ;;may be platform dependent code
   ;;but i still need it
-  ;;return the parameter list of given function
+  ;;returns the parameter list of given function
   (let ((ns (dsgner::empty-string))
 	(lambda-list nil))
     (with-output-to-string (stream ns)
@@ -24,7 +26,10 @@
 	  (when start
 	    (setf lambda-list (subseq line (+ start
 					      (length "Lambda-list: "))))))))
-    lambda-list))
+    (if (search "(&REST ARGUMENTS &KEY " lambda-list :test #'string=)
+	(read-from-string lambda-list)
+	(read-from-string "(&rest argumets &key)"))))
+	
 
 (defmacro map-urls (prefix &body body)
     `(progn
@@ -39,14 +44,21 @@
                          (:folder "folder")
                          (otherwise 
 			  (let* ((handler (cadr mapping))
-                                 (args nil #|(get-lambda-list handler)|#)
                                  (uri (format nil "~A~A" prefix (cadr uri-part))))
-                            `(define-easy-handler (,(gensym) :uri ,uri)
-                                                  ,args
-                                                  (,handler ,@(mapcan #'(lambda (arg)
-									  `(,(hunchentoot::convert-parameter (string-downcase arg) 'keyword) ,arg))
-								      args))))))))
-                 body)))
+			    (destructuring-bind (arg0 arg1 arg2 &rest args)
+				(get-lambda-list handler)
+			      `(define-easy-handler (,(gensym) :uri ,uri)
+				   ,(mapcar #'(lambda(arg)
+						 (if (listp arg)
+						     (car arg)
+						     arg))
+					    args)
+				 (,handler ,@(mapcan #'(lambda (arg)
+							 (if (listp arg)
+							     `(,(hunchentoot::convert-parameter (string-downcase (car arg)) 'keyword) (null-value-check ,(car arg) ,(cadr arg)))
+							      `(,(hunchentoot::convert-parameter (string-downcase arg) 'keyword) ,arg)))
+						     args)))))))))
+		 body)))
 
 (defun server-start (&key (port 8000))
   (defparameter *httpd* (start (make-instance 'acceptor :port port))))

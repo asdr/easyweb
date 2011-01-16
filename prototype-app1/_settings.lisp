@@ -8,7 +8,7 @@
 (in-package :prototype-app1.settings)
 
 
-;;url dispatching should occur here
+;;URLs
 (map-urls "/"
   ((:std "") index-page)
   ((:std "asdr") open-link)

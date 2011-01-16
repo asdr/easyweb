@@ -2,13 +2,14 @@
 
 (defpackage :prototype-app1.view
   (:use #:cl
+	#:easyweb.util
 	#:easyweb.html)
   (:export #:index-page
 	   #:open-link
 	   #:mervecigim))
 
 (in-package :prototype-app1.view)
-
+ 
 ;; abow code can/should be inserted dynamically
 
 (defun index-page ()
@@ -28,7 +29,7 @@
 	      "tutorials")
 	  " page.")))))
 
-(defun open-link (&key (link "http://localhost:8000/"))
+(defun open-link (&rest arguments &key (link "\"http://localhost:8000/\""))
   (:doctype ()
     (:html ()
       (:head ()
@@ -49,7 +50,4 @@
     (:body ()
       (:form ()
 	     (:input (:type "text" 
-		      :onkeydown "javascript:this.value=this.value.toUpperCase();"
-		      :onkeyup "javascript:this.value=this.value.toUpperCase();"
-		      :onBlur "javascript:this.value=this.value.toUpperCase();"
-		      :onclick "javascript:this.value=this.value.toUpperCase();"))))))
+			    :onkeyup "javascript:this.value=this.value.toUpperCase();"))))))

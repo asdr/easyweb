@@ -9,7 +9,8 @@
     :name "easyweb"
     :serial t
     :depends-on (#:dsgner #:hunchentoot)
-    :components ((:file "easyweb")
+    :components ((:file "util")
+		 (:file "easyweb")
 		 (:file "html")))
 
 
