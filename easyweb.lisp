@@ -4,7 +4,8 @@
   (:use #:cl
 	#:easyweb.util
 	#:hunchentoot)
-  (:export #:map-urls
+  (:export #:defview
+           #:map-urls
 	   #:server-start
 	   #:server-stop))
 
@@ -66,3 +67,13 @@
 (defun server-stop ()
   (stop *httpd*)
   (setf *httpd* nil))
+
+
+(defmacro defview (name (&rest arguments) &body body)
+  `(defun ,name (&rest arguments &key ,@(mapcar #'(lambda(arg)
+						    (when (listp arg)
+						      (setf (cadr arg)
+							    (enclose-string (format nil "~A" (cadr arg)))))
+						    arg)
+						arguments))
+     ,@body))

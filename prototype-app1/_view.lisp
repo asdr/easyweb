@@ -2,7 +2,7 @@
 
 (defpackage :prototype-app1.view
   (:use #:cl
-	#:easyweb.util
+	#:easyweb
 	#:easyweb.html)
   (:export #:index-page
 	   #:open-link
@@ -12,7 +12,7 @@
  
 ;; abow code can/should be inserted dynamically
 
-(defun index-page ()
+(defview index-page ()
   (:doctype ()
     (:html ()
       (:head ()
@@ -29,7 +29,7 @@
 	      "tutorials")
 	  " page.")))))
 
-(defun open-link (&rest arguments &key (link "\"http://localhost:8000/\""))
+(defview open-link ((link "http://localhost:8000/"))
   (:doctype ()
     (:html ()
       (:head ()
@@ -39,7 +39,7 @@
 	(:a (:href link)
 	  "the link")))))
 
-(defun mervecigim ()
+(defview mervecigim ()
   (:html ()
     (:head ()
       (:script (:type "text/javascript")
