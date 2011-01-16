@@ -23,7 +23,7 @@
 	    "Hello, world! le-jango is working..."))
 	(:p ()
 	  (:br ())
-	  "For more information, go on and click onto "
+	  "For more information, go on and jump into "
 	  (:a (:href "http://localhost/le-jango/docs.html")
 	      "tutorials")
 	  " page.")))))
