@@ -3,13 +3,10 @@
 (defpackage :prototype-app1.view
   (:use #:cl
 	#:easyweb
-	#:easyweb.html)
-  (:export #:index-page
-	   #:open-link
-	   #:mervecigim))
+	#:easyweb.html))
 
 (in-package :prototype-app1.view)
- 
+
 ;; abow code can/should be inserted dynamically
 
 (defview index-page ()

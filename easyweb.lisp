@@ -70,10 +70,18 @@
 
 
 (defmacro defview (name (&rest arguments) &body body)
-  `(defun ,name (&rest arguments &key ,@(mapcar #'(lambda(arg)
-						    (when (listp arg)
-						      (setf (cadr arg)
-							    (enclose-string (format nil "~A" (cadr arg)))))
-						    arg)
-						arguments))
-     ,@body))
+  `(progn 
+     (defun ,name (&rest arguments ,@(let ((ret (mapcar #'(lambda(arg)
+							    (when (listp arg)
+							      (setf (cadr arg)
+								    (enclose-string (format nil "~A" (cadr arg)))))
+							    arg)
+							arguments)))
+					  (when ret
+					    (push '&key ret))))
+       
+       
+       ,@body)
+     ;; i have explicitly written down 'cl:' prefix
+     ;; ftso readability
+     (cl:export ',name cl:*package*)))
