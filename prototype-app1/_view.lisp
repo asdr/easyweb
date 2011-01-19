@@ -2,10 +2,12 @@
 
 (defpackage :prototype-app1.view
   (:use #:cl
-	#:easyweb
 	#:easyweb.html))
 
 (in-package :prototype-app1.view)
+
+(defmacro defview (name (&rest arguments) &body body)
+  `(easyweb:defview ,name arguments ,arguments ,@body))
 
 ;; abow code can/should be inserted dynamically
 
@@ -52,6 +54,7 @@
 (defview argtest ((arg0 "arg0") arg1 (arg2 123))
   (:html ()
     (:body ()
-      (loop for arg in arguments
-	   do (:h3 ()
-		arg)))))
+      (let ((ret ""))
+	(loop for arg in arguments
+	   do (setf ret (format nil "~A~A" ret (:h3 () arg))))
+	ret))))

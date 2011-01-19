@@ -40,7 +40,7 @@
     (destructuring-bind (none0 arguments &rest rest)
 	(get-lambda-list handler)
       (let ((args (cdr rest))) ;;because the first of rest is &key
-	`(define-easy-handler (,(gensym) :uri ,uri-type)
+	`(define-easy-handler (,(gensym) :uri ,uri-content)
 	     ,(mapcar #'(lambda(arg)
 			  (if (listp arg)
 			      (car arg)
@@ -48,8 +48,8 @@
 		      args)
 	   (,handler ,@(mapcan #'(lambda (arg)
 				   (if (listp arg)
-				       `(,(hunchentoot::convert-parameter (string-downcase (car arg)) 'keyword) (null-value-check ,(car arg) ,(cadr arg)))
-				       `(,(hunchentoot::convert-parameter (string-downcase arg) 'keyword) ,arg)))
+				       `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (null-value-check ,(car arg) ,(cadr arg)))
+				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) ,arg)))
 			       args)))))))
 	 
 
@@ -66,18 +66,18 @@
   (setf *httpd* nil))
 
 
-(defmacro defview (name (&rest arguments) &body body)
+(defmacro defview (name inner-args (&rest arguments) &body body)
   `(progn 
-     (defun ,name (&rest arguments ,@(let ((ret (mapcar #'(lambda(arg)
-							    (when (listp arg)
-							      (setf (cadr arg)
-								    (enclose-string (format nil "~A" (cadr arg)))))
-							    arg)
-							arguments)))
-					  (when ret
-					    (push '&key ret))))
+     (defun ,name (&rest ,inner-args ,@(let ((ret (mapcar #'(lambda(arg)
+							      (when (listp arg)
+								(setf (cadr arg)
+								      (enclose-string (format nil "~A" (cadr arg)))))
+							      arg)
+							  arguments)))
+					    (when ret
+					      (push '&key ret))))
        
        
        ,@body)
-
+     
      (cl:export ',name cl:*package*)))
