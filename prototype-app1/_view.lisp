@@ -48,3 +48,10 @@
       (:form ()
 	     (:input (:type "text" 
 			    :onkeyup "javascript:this.value=this.value.toUpperCase();"))))))
+
+(defview argtest ((arg0 "arg0") arg1 (arg2 123))
+  (:html ()
+    (:body ()
+      (loop for arg in arguments
+	   do (:h3 ()
+		arg)))))

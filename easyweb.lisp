@@ -5,7 +5,7 @@
 	#:easyweb.util
 	#:hunchentoot)
   (:export #:defview
-           #:map-urls
+	   #:map-all-urls
 	   #:server-start
 	   #:server-stop))
 
@@ -32,34 +32,31 @@
 	(read-from-string "(&rest argumets &key)"))))
 	
 
-(defmacro map-urls (prefix &body body)
-    `(progn
-       ,@(mapcar #'(lambda (mapping)
-                     (let* ((uri-part (car mapping))
-                            (type (car uri-part))
-                            (uri nil))
-                       (case type
-                         (:regex "regular exp.")
-			 (:prefix "prefix")
-                         (:file "file-")
-                         (:folder "folder")
-                         (otherwise 
-			  (let* ((handler (cadr mapping))
-                                 (uri (format nil "~A~A" prefix (cadr uri-part))))
-			    (destructuring-bind (arg0 arg1 arg2 &rest args)
-				(get-lambda-list handler)
-			      `(define-easy-handler (,(gensym) :uri ,uri)
-				   ,(mapcar #'(lambda(arg)
-						 (if (listp arg)
-						     (car arg)
-						     arg))
-					    args)
-				 (,handler ,@(mapcan #'(lambda (arg)
-							 (if (listp arg)
-							     `(,(hunchentoot::convert-parameter (string-downcase (car arg)) 'keyword) (null-value-check ,(car arg) ,(cadr arg)))
-							      `(,(hunchentoot::convert-parameter (string-downcase arg) 'keyword) ,arg)))
-						     args)))))))))
-		 body)))
+(defun handle-mapping (mapping prefix)
+  (let* ((uri (car mapping))
+	 (uri-type (car uri))
+	 (uri-content (format nil "~A~A" prefix (cadr uri))) 
+	 (handler (cadr mapping)))
+    (destructuring-bind (none0 arguments &rest rest)
+	(get-lambda-list handler)
+      (let ((args (cdr rest))) ;;because the first of rest is &key
+	`(define-easy-handler (,(gensym) :uri ,uri-type)
+	     ,(mapcar #'(lambda(arg)
+			  (if (listp arg)
+			      (car arg)
+			      arg))
+		      args)
+	   (,handler ,@(mapcan #'(lambda (arg)
+				   (if (listp arg)
+				       `(,(hunchentoot::convert-parameter (string-downcase (car arg)) 'keyword) (null-value-check ,(car arg) ,(cadr arg)))
+				       `(,(hunchentoot::convert-parameter (string-downcase arg) 'keyword) ,arg)))
+			       args)))))))
+	 
+
+(defmacro map-all-urls (prefix &body body)
+  `(progn ,@(mapcar #'(lambda(mapping)
+			(funcall #'handle-mapping mapping prefix)) 
+		    body)))
 
 (defun server-start (&key (port 8000))
   (defparameter *httpd* (start (make-instance 'acceptor :port port))))
@@ -82,6 +79,5 @@
        
        
        ,@body)
-     ;; i have explicitly written down 'cl:' prefix
-     ;; ftso readability
+
      (cl:export ',name cl:*package*)))
