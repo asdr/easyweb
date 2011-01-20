@@ -37,11 +37,15 @@
 	 (uri-type (car uri))
 	 (uri-content (format nil "~A~A" prefix (cadr uri))) 
 	 (handler (cadr mapping))
-	 (request-method (cond ((and (search "/get" (string handler) :test #'string-equal)) ;;modification req.
+	 (handler-name (string handler))
+	 (request-method (cond ((= (search "/get" handler-name :test #'string-equal)
+				   (- (length handler-name) 4))
 				:GET)
-			       ((and (search "/post" (string handler) :test #'string-equal)) ;; ""
+			       ((= (search "/post" handler-name :test #'string-equal)
+				   (- (length handler-name) 5))
 				:POST)
-			       (t :BOTH))))
+			       (t 
+				:BOTH))))
     (destructuring-bind (none0 arguments &rest rest)
 	(get-lambda-list handler)
       (let ((args (cdr rest))) ;;because the first of rest is &key
@@ -85,3 +89,24 @@
        ,@body)
      
      (cl:export ',name cl:*package*)))
+
+
+(defun write-to-file (in out)
+  (do ((line (read-line in nil 'eos) (read-line in nil 'eos)))
+      ((eq line 'eof) t)
+    (princ line out)))
+
+(defun clone-file (if-path of-path)
+  (with-open-file (in if-path :direction :input)
+    (with-open-file (out of-path :direction :output
+			         :if-exists :supersede)
+      (write-to-file in out))))
+
+
+
+
+
+
+
+
+

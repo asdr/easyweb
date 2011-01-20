@@ -86,7 +86,7 @@
 	"Request Method: "
 	(request-method *request*)))))
 
-(defview form ((url "http://192.168.1.67:8000/"))
+(defview form ((url "http://localhost:8000/"))
   (:doctype ()
     (:html ()
       (:body ()
