@@ -10,10 +10,10 @@
 
 ;;URLs
 (map-all-urls "/"
-  ((:std "") index-page)
+  ((:prefix "") index-page)
 ;  ((:std "asdr") open-link)
-  ((:std "argtest") argtest))
-;  ((:prefix "serdar") mervecigim)
+  ((:absolute "argtest") argtest)
+  ((:regex "asdr[0-9]+$") mervecigim))
 ;  ((:std "merve") mervecigim))
 ;  ((:file "tmp/fileX" "/home/admin-o/pjs/easyweb/tmp/filex.x" "text/plain"))
 ;  ((:folder "tmp/" "/home/asdr/admin-o/pjs/easyweb/" "text/plain")))

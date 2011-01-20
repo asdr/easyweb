@@ -40,7 +40,7 @@
     (destructuring-bind (none0 arguments &rest rest)
 	(get-lambda-list handler)
       (let ((args (cdr rest))) ;;because the first of rest is &key
-	`(define-easy-handler (,(gensym) :uri ,uri-content)
+	`(define-url-handler (,(gensym) :uri ,(cons uri-type uri-content))
 	     ,(mapcar #'(lambda(arg)
 			  (if (listp arg)
 			      (car arg)
@@ -64,7 +64,6 @@
 (defun server-stop ()
   (stop *httpd*)
   (setf *httpd* nil))
-
 
 (defmacro defview (name inner-args (&rest arguments) &body body)
   `(progn 

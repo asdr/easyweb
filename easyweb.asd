@@ -10,7 +10,9 @@
     :serial t
     :depends-on (#:dsgner #:hunchentoot)
     :components ((:file "util")
+		 (:file "url-handler")
 		 (:file "easyweb")
-		 (:file "html")))
+		 (:file "html")
+		 (:file "initialize")))
 
 
