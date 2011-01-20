@@ -36,11 +36,16 @@
   (let* ((uri (car mapping))
 	 (uri-type (car uri))
 	 (uri-content (format nil "~A~A" prefix (cadr uri))) 
-	 (handler (cadr mapping)))
+	 (handler (cadr mapping))
+	 (request-method (cond ((and (search "/get" (string handler) :test #'string-equal)) ;;modification req.
+				:GET)
+			       ((and (search "/post" (string handler) :test #'string-equal)) ;; ""
+				:POST)
+			       (t :BOTH))))
     (destructuring-bind (none0 arguments &rest rest)
 	(get-lambda-list handler)
       (let ((args (cdr rest))) ;;because the first of rest is &key
-	`(define-url-handler (,(gensym) :uri ,(cons uri-type uri-content))
+	`(define-url-handler (,(gensym) :uri ,(cons uri-type uri-content) :default-request-type ,request-method)
 	     ,(mapcar #'(lambda(arg)
 			  (if (listp arg)
 			      (car arg)

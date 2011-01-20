@@ -2,7 +2,8 @@
 
 (defpackage :prototype-app1.view
   (:use #:cl
-	#:easyweb.html))
+	#:easyweb.html
+	#:hunchentoot))
 
 (in-package :prototype-app1.view)
 
@@ -11,7 +12,7 @@
 
 ;; abow code can/should be inserted dynamically
 
-(defview index-page ()
+(defview index-page/get ()
   (:doctype ()
     (:html ()
       (:head ()
@@ -20,7 +21,30 @@
       (:body (:font-color "green")
 	(:p ()
 	  (:h2 ()
-	    "Hello, world! le-jango is working..."))
+	    "Hello, world! le-jango is working...")
+	  (:h4 ()
+	    "GET"))
+	(:p ()
+	  (:br ())
+	  "For more information, go on and jump into "
+	  (:a (:href "http://localhost/le-jango/docs.html")
+	      "tutorials")
+	  " page."
+	  msg)))))
+
+(defview index-page/post ((msg "asdr"))
+  (:doctype ()
+    (:html ()
+      (:head ()
+	(:title ()
+	  "Welcome to le-jango project!"))
+      (:body (:font-color "green")
+	(:p ()
+	  (:h2 ()
+	    "Hello, world! le-jango is working...")
+	  (:h4 ()
+	    "POST: "
+	    msg))
 	(:p ()
 	  (:br ())
 	  "For more information, go on and jump into "
@@ -54,7 +78,22 @@
 (defview argtest ((arg0 "arg0") arg1 (arg2 123))
   (:html ()
     (:body ()
-      (let ((ret ""))
-	(loop for arg in arguments
-	   do (setf ret (format nil "~A~A" ret (:h3 () arg))))
-	ret))))
+      (:p ()
+	(let ((ret ""))
+	  (loop for arg in arguments
+	     do (setf ret (format nil "~A~A" ret (:h3 () arg))))
+	  ret))
+      (:p ()
+	"Request Method: "
+	(request-method *request*)))))
+
+(defview form ((url "http://192.168.1.67:8000/"))
+  (:doctype ()
+    (:html ()
+      (:body ()
+	(:form (:action url
+		:method :post)
+	  (:input (:type "textfield"
+		   :name "msg"))
+	  (:input (:type "submit"
+		   :value "send")))))))

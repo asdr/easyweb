@@ -1,5 +1,5 @@
 #|
-This code is almost taken from hunchentoot source code. 
+This code is mostly taken from hunchentoot source code. 
 Briefly, the work done in here is defining new easy-handler and a dispatcher for le-jango.
 In hanchentoot define-easy-handler macro just works for absolute uris, however I need the 
 other handling types, e.g. regex and prefix matching, which can also be found in hunchentoot,

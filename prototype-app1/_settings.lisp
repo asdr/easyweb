@@ -10,8 +10,8 @@
 
 ;;URLs
 (map-all-urls "/"
-  ((:prefix "") index-page)
-;  ((:std "asdr") open-link)
+  ((:prefix "") index-page/post)
+  ((:absolute "form") form)
   ((:absolute "argtest") argtest)
   ((:regex "asdr[0-9]+$") mervecigim))
 ;  ((:std "merve") mervecigim))
