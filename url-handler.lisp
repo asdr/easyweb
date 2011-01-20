@@ -13,10 +13,16 @@ but not in define-easy-handler macro. So below is that for...
 (defparameter *url-handlers* nil
   "Handlers are stored in this list.")
 
+;debug
+;(defparameter *asdr* nil)
+
 (defun dispatch-url-handlers (request)
-  (loop for ((uri-type . uri-content) acceptor-names easy-handler) in *url-handlers*
+  (loop for ((uri-type . uri-content) acceptor-names easy-handler request-type) in *url-handlers*
      when (and (or (eq acceptor-names t)
 		   (find (acceptor-name *acceptor*) acceptor-names :test #'eq))
+	       ;(push (format nil "~A : ~A" request-type (request-method request)) *asdr*)
+	       (or (eq :BOTH request-type)
+		   (eq request-type (request-method request)))
 	       (cond ((stringp uri-content)
 		      (case uri-type
 			(:absolute ;;ABOLUTE matching
@@ -41,10 +47,10 @@ but not in define-easy-handler macro. So below is that for...
       description
     `(progn 
        (setq *url-handlers* (delete-if #'(lambda (list)
-					   (or (equal ,(cdr uri) (cdr (first list)))
-					       (eq ',name (third list))))
+					   (and (equal ,(cdr uri) (cdr (first list)))
+						(eq ,default-request-type (fourth list))))
 				       *url-handlers*))
-       (push (list ',uri ,acceptor-names ',name) *url-handlers*)
+       (push (list ',uri ,acceptor-names ',name ',default-request-type) *url-handlers*)
        
        (defun ,name (&key ,@(loop for part in lambda-list
 			       collect (make-defun-parameter part

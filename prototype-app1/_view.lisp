@@ -29,8 +29,7 @@
 	  "For more information, go on and jump into "
 	  (:a (:href "http://localhost/le-jango/docs.html")
 	      "tutorials")
-	  " page."
-	  msg)))))
+	  " page.")))))
 
 (defview index-page/post ((msg "asdr"))
   (:doctype ()

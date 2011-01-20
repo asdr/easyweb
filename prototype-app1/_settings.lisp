@@ -10,6 +10,7 @@
 
 ;;URLs
 (map-all-urls "/"
+  ((:prefix "") index-page/get)
   ((:prefix "") index-page/post)
   ((:absolute "form") form)
   ((:absolute "argtest") argtest)
