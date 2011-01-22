@@ -14,6 +14,7 @@
   ((:prefix "") index-page/post)
   ((:absolute "form") form)
   ((:absolute "argtest") argtest)
+  ((:absolute "template1") template1/get)
   ((:regex "asdr[0-9]+$") mervecigim))
 ;  ((:std "merve") mervecigim))
 ;  ((:file "tmp/fileX" "/home/admin-o/pjs/easyweb/tmp/filex.x" "text/plain"))

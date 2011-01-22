@@ -96,3 +96,9 @@
 		   :name "msg"))
 	  (:input (:type "submit"
 		   :value "send")))))))
+
+(defview template1/get ()
+  (:doctype ()
+    (:html ()
+      (:body ()
+	(:form (:action __self__))))))

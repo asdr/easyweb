@@ -11,16 +11,12 @@ but not in define-easy-handler macro. So below is that for...
 (in-package :hunchentoot)
 
 (defparameter *url-handlers* nil
-  "Handlers are stored in this list.")
-
-;debug
-;(defparameter *asdr* nil)
+  "Handlers will be stored in this list.")
 
 (defun dispatch-url-handlers (request)
   (loop for ((uri-type . uri-content) acceptor-names easy-handler request-type) in *url-handlers*
      when (and (or (eq acceptor-names t)
 		   (find (acceptor-name *acceptor*) acceptor-names :test #'eq))
-	       ;(push (format nil "~A : ~A" request-type (request-method request)) *asdr*)
 	       (or (eq :BOTH request-type)
 		   (eq request-type (request-method request)))
 	       (cond ((stringp uri-content)

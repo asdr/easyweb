@@ -1,14 +1,3 @@
-(in-package :common-lisp-user)
-
-(defpackage :easyweb
-  (:use #:cl
-	#:easyweb.util
-	#:hunchentoot)
-  (:export #:defview
-	   #:map-all-urls
-	   #:server-start
-	   #:server-stop))
-
 (in-package :easyweb)
 
 (defun get-lambda-list (fn)
@@ -38,28 +27,33 @@
 	 (uri-content (format nil "~A~A" prefix (cadr uri))) 
 	 (handler (cadr mapping))
 	 (handler-name (string handler))
-	 (request-method (cond ((= (search "/get" handler-name :test #'string-equal)
-				   (- (length handler-name) 4))
+	 (request-method (cond ((eq (search "/get" handler-name :test #'string-equal)
+				    (- (length handler-name) 4))
 				:GET)
-			       ((= (search "/post" handler-name :test #'string-equal)
-				   (- (length handler-name) 5))
+			       ((eq (search "/post" handler-name :test #'string-equal)
+				    (- (length handler-name) 5))
 				:POST)
 			       (t 
 				:BOTH))))
     (destructuring-bind (none0 arguments &rest rest)
 	(get-lambda-list handler)
       (let ((args (cdr rest))) ;;because the first of rest is &key
-	`(define-url-handler (,(gensym) :uri ,(cons uri-type uri-content) :default-request-type ,request-method)
-	     ,(mapcar #'(lambda(arg)
-			  (if (listp arg)
-			      (car arg)
-			      arg))
-		      args)
-	   (,handler ,@(mapcan #'(lambda (arg)
-				   (if (listp arg)
-				       `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (null-value-check ,(car arg) ,(cadr arg)))
-				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) ,arg)))
-			       args)))))))
+	`(let ((__self__ (concatenate 'string
+				      "http://"
+				      *listen-address*
+				      ":"
+				      *listen-port*)))
+	   (define-url-handler (,(gensym) :uri ,(cons uri-type uri-content) :default-request-type ,request-method)
+	       ,(mapcar #'(lambda(arg)
+			    (if (listp arg)
+				(car arg)
+				arg))
+			args)
+	     (,handler ,@(mapcan #'(lambda (arg)
+				     (if (listp arg)
+					 `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (null-value-check ,(car arg) ,(cadr arg)))
+					 `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) ,arg)))
+				 args))))))))
 	 
 
 (defmacro map-all-urls (prefix &body body)
@@ -67,12 +61,6 @@
 			(funcall #'handle-mapping mapping prefix)) 
 		    body)))
 
-(defun server-start (&key (port 8000))
-  (defparameter *httpd* (start (make-instance 'acceptor :port port))))
-
-(defun server-stop ()
-  (stop *httpd*)
-  (setf *httpd* nil))
 
 (defmacro defview (name inner-args (&rest arguments) &body body)
   `(progn 

@@ -8,9 +8,13 @@
 (defsystem #:easyweb
     :name "easyweb"
     :serial t
-    :depends-on (#:dsgner #:hunchentoot)
+    :depends-on (#:dsgner
+		 #:hunchentoot
+		 #:html-template)
     :components ((:file "util")
-		 (:file "url-handler")
+		 (:file "url-handler") ;;url-handling and dispatching for hunchentoot
+		 (:file "defpackage")
+		 (:file "server")
 		 (:file "easyweb")
 		 (:file "html")
 		 (:file "initialize")))

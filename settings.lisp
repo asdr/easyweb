@@ -1,16 +1,23 @@
 (in-package :common-lisp-user)
 
 (defpackage :easyweb.settings
-  (:use #:cl))
+  (:use #:cl)
+  (:export #:*template-directory*))
 
 (in-package :easyweb.settings)
 
-(defun build-hash-table (alist)
-  (let ((ht (make-hash-table)))
-    (dolist (pair alist ht)
-      (setf (gethash (car pair) ht) (cdr pair)))))
+(defparameter *template-directory* "template")
+(defparameter *template-start-tag* "(@+")
+(defparameter *template-end-tag* "+@)")
 
-;;available applications
-(defparameter *use-applications*
-  (build-hash-table '(
-    ("prototype-app1" "/home/a
+
+;;html-template settings
+(setf html-template:*template-start-marker* *template-start-tag*
+      html-template:*template-end-marker* *template-end-tag*)
+
+
+
+
+
+
+
