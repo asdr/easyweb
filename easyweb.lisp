@@ -38,23 +38,18 @@
     (destructuring-bind (none0 arguments &rest rest)
 	(get-lambda-list handler)
       (let ((args (cdr rest))) ;;because the first of rest is &key
-	`(let ((__self__ (concatenate 'string
-				      "http://"
-				      *listen-address*
-				      ":"
-				      *listen-port*)))
-	   (define-url-handler (,(gensym) :uri ,(cons uri-type uri-content) :default-request-type ,request-method)
-	       ,(mapcar #'(lambda(arg)
-			    (if (listp arg)
-				(car arg)
-				arg))
-			args)
-	     (,handler ,@(mapcan #'(lambda (arg)
-				     (if (listp arg)
-					 `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (null-value-check ,(car arg) ,(cadr arg)))
-					 `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) ,arg)))
-				 args))))))))
-	 
+	`(define-url-handler (,(gensym) :uri ,(cons uri-type uri-content) :default-request-type ,request-method)
+	     ,(mapcar #'(lambda(arg)
+			  (if (listp arg)
+			      (car arg)
+			      arg))
+		      args)
+	   (,handler ,@(mapcan #'(lambda (arg)
+				   (if (listp arg)
+				       `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (null-value-check ,(car arg) ,(cadr arg)))
+				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) ,arg)))
+			       args)))))))
+
 
 (defmacro map-all-urls (prefix &body body)
   `(progn ,@(mapcar #'(lambda(mapping)
@@ -77,24 +72,4 @@
        ,@body)
      
      (cl:export ',name cl:*package*)))
-
-
-(defun write-to-file (in out)
-  (do ((line (read-line in nil 'eos) (read-line in nil 'eos)))
-      ((eq line 'eof) t)
-    (princ line out)))
-
-(defun clone-file (if-path of-path)
-  (with-open-file (in if-path :direction :input)
-    (with-open-file (out of-path :direction :output
-			         :if-exists :supersede)
-      (write-to-file in out))))
-
-
-
-
-
-
-
-
 

@@ -16,3 +16,10 @@
   (if (null argument)
       default-value
       argument))
+
+
+(defun macroexpand-tree (tree) 
+  (setq tree (macroexpand tree)) 
+  (if (atom tree) 
+      tree
+      (mapcar #'macroexpand-tree tree)))

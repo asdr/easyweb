@@ -101,4 +101,4 @@
   (:doctype ()
     (:html ()
       (:body ()
-	(:form (:action __self__))))))
+	(:form (:action :__self__))))))

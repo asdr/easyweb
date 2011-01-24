@@ -1,0 +1,15 @@
+(in-package :easyweb)
+
+(defun write-to-file (in out)
+  (do ((line (read-line in nil 'eos) (read-line in nil 'eos)))
+      ((eq line 'eof) t)
+    (princ line out)))
+
+(defun clone-file (if-path of-path)
+  (with-open-file (in if-path :direction :input)
+    (with-open-file (out of-path :direction :output
+			         :if-exists :supersede)
+      (write-to-file in out))))
+
+
+
