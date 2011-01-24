@@ -16,6 +16,7 @@
 		 (:file "defpackage")
 		 (:file "server")
 		 (:file "easyweb")
+		 (:file "project-util")
 		 (:file "html")
 		 (:file "initialize")))
 
