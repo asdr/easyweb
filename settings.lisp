@@ -7,8 +7,8 @@
 (in-package :easyweb.settings)
 
 (defparameter *template-directory* "template")
-(defparameter *template-start-tag* "(@+")
-(defparameter *template-end-tag* "+@)")
+(defparameter *template-start-tag* "(%")
+(defparameter *template-end-tag* "%)")
 
 
 ;;html-template settings
@@ -16,7 +16,8 @@
       html-template:*template-end-marker* *template-end-tag*)
 
 
-
+(defparameter *available-applications* 
+  (vector "prototype-app1"))
 
 
 

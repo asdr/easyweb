@@ -8,19 +8,6 @@
 
 (defvar *easyweb-prototype-dir* "/home/asdr/projects/easyweb/prototype-app1")
 
-#|
-(defun create-word-scanner (word)
-  (let ((word-buffer (coerce word 'list)))
-    (lambda (text-string)
-      (let ((s-word nil))
-	    (text (coerce text-string 'list)))
-	(dolist (ch text)
-	  (if (or (eq ch #\Space)
-		  (eq ch #\Newline)
-		  (eq ch #\Tab))
-	      (w	     
-|#
-
 (defun create-appender (initial-list)
   (let ((acc-list initial-list)
 	(tail (nthcdr (1- (length initial-list)) initial-list)))
@@ -33,7 +20,7 @@
 (defun write-to-file (in out)
   (do ((line (read-line in nil 'eof) (read-line in nil 'eof)))
       ((eql line 'eof) t)
-    (format out "~A~A" line #\\Newline)))
+    (format out "~A~A" line #\Newline)))
 
 (defun clone-file (if-path of-path)
   (with-open-file (in if-path :direction :input)

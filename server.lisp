@@ -8,7 +8,7 @@
   (defparameter *httpd* (hunchentoot:start (make-instance 'hunchentoot:acceptor 
 							  :port port
 							  :name "easyweb-default-acceptor"
-							  :address address))))
+							  #|:address address|#))))
 
 (defun server-stop ()
   (hunchentoot:stop *httpd*)
