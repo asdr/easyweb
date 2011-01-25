@@ -1,0 +1,16 @@
+(in-package :common-lisp-user)
+
+(defpackage :easyweb.aserver
+  (:use #:cl #:usocket))
+
+(in-package :easyweb.aserver)
+
+
+;a Simple echo server
+(let ((server (socket-listen "localhost" 4499)))
+  (do ()
+      (nil)
+    (let ((client-socket (socket-accept server)))
+      (format (socket-stream client-socket)
+	      "~A"
+	      (read-line (socket-stream client-socket))))))
