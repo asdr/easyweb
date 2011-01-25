@@ -14,6 +14,7 @@
     :components ((:file "util")
 		 (:file "url-handler") ;;url-handling and dispatching for hunchentoot
 		 (:file "defpackage")
+		 (:file "settings")
 		 (:file "server")
 		 (:file "easyweb")
 		 (:file "project-util")

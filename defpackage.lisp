@@ -5,6 +5,6 @@
 	#:easyweb.util
 	#:hunchentoot)
   (:export #:defview
-	   #:map-all-urls
+	   #:define-url-patterns
 	   #:server-start
 	   #:server-stop))

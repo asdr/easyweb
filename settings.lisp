@@ -2,7 +2,21 @@
 
 (defpackage :easyweb.settings
   (:use #:cl)
-  (:export #:*template-directory*))
+  (:export #:*available-applications*
+	   #:*template-directory*))
+
+(in-package :easyweb)
+
+(defun set-application-loaded (application-name)
+  (let ((application (find application-name
+			   easyweb.settings:*available-applications*
+			   :test #'string=
+			   :key #'car)))
+    (when application
+      (setf (cdr application)
+	    (cons t nil)))))
+
+(cl:export 'set-application-loaded) 
 
 (in-package :easyweb.settings)
 
@@ -17,7 +31,9 @@
 
 
 (defparameter *available-applications* 
-  (vector "prototype-app1"))
+  (vector '("easyweb-default" . nil)
+	  '("prototype-app1" . nil)))
+	  
 
 
 

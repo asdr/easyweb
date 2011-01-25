@@ -51,12 +51,21 @@
 			       args)))))))
 
 
-(defmacro map-all-urls (prefix &body body)
+(defmacro map-url-patterns (prefix &body body)
   `(progn ,@(mapcar #'(lambda(mapping)
 			(funcall #'handle-mapping mapping prefix)) 
 		    body)))
 
-
+(defmacro define-url-patterns (prefix &body body)
+  (let ((application/g! (gensym)))
+    `(let ((,application/g! (find *application-name* 
+				  easyweb.settings:*available-applications* 
+				  :test #'string=
+				  :key #'car)))
+       (when ,application/g! ;;application is in available applications alist
+	 (unless (cdr ,application/g!) ;; application is not loaded yet
+	   (map-url-patterns ,prefix ,@body))))))
+  
 (defmacro defview (name inner-args (&rest arguments) &body body)
   `(progn 
      (defun ,name (&rest ,inner-args ,@(let ((ret (mapcar #'(lambda(arg)
