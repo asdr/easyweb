@@ -6,10 +6,9 @@
 (in-package :easyweb.aserver)
 
 (defun handle-connection (stream)
-  (format (socket-stream client-socket)
-	  "~A"
-	  (read-line (socket-stream client-socket)))
-  (force-output (socket-stream client-socket)))
+  (princ (read-line stream) stream)
+  (princ (code-char 13) stream)
+  (princ (code-char 10) stream))
 
 ;a Simple echo server
 (defun start-sequential ()
@@ -17,7 +16,15 @@
     (do ()
 	(nil)
       (let ((client-socket (socket-accept server)))
-	(handle-connection (socket-accept server))))))
+	(handle-connection (socket-stream client-socket)))))
 
 (defun start-threaded ()
-  (let ((
+  (let ((server (socket-listen "localhost" 4499)))
+    (do ()
+	(nil)
+      (let ((client-socket (socket-accept server)))
+	(let ((thread (sb-thread:make-thread (lambda()
+					       (let ((stream (socket-stream client-socket)))
+						 (handle-connection stream)
+						 (socket-close client-socket)))))))))
+    (socket-close server)))
