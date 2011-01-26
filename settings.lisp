@@ -29,9 +29,11 @@
 (setf html-template:*template-start-marker* *template-start-tag*
       html-template:*template-end-marker* *template-end-tag*)
 
+(defparameter *use-available-check* nil)
 
 (defparameter *available-applications* 
-  (vector '("easyweb-default" . nil)
+  (vector '("test3" . nil)
+	  '("easyweb-default" . nil)
 	  '("prototype-app1" . nil)))
 	  
 

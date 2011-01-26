@@ -25,7 +25,7 @@
       (mapcar #'macroexpand-tree tree)))
 
 
-#| - LET OVER LAMBDA UTILITIES - |#
+#| - LET OVER LAMBDA UTILITIES - 
 (defun mkstr (&rest args)
   (with-output-to-string (s)
     (dolist (a args) (princ a s))))
@@ -99,3 +99,4 @@
   `(progn
      (format t "[~A gave ~A]~%" ',o!x ,g!x)
      (* ,g!x ,g!x)))
+|#

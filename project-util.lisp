@@ -6,7 +6,7 @@
 			    ("_view" . "lisp")
 			    ("template-app" . "asd")))
 
-(defvar *easyweb-template-application-dir* "/home/asdr/projects/easyweb/template-app")
+(defvar *easyweb-template-application-dir* "/home/admin-o/pjs/easyweb/template-app")
 
 (defun create-appender (initial-list)
   (let ((acc-list initial-list)
@@ -55,8 +55,11 @@
 				:directory *easyweb-template-application-dir*
 				:name name
 				:type type))
-		      (of-path (make-pathname 
-				:directory path
-				:name name
-				:type type)))
+		      (of-path (progn 
+				 (when (string= type "asd")
+				   (setf name project-name))
+				 (make-pathname 
+				  :directory path
+				  :name name
+				  :type type))))
 		  (clone-file if-path of-path project-name))))))))
