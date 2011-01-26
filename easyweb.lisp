@@ -46,8 +46,8 @@
 		      args)
 	   (,handler ,@(mapcan #'(lambda (arg)
 				   (if (listp arg)
-				       `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (null-value-check ,(car arg) ,(cadr arg)))
-				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) ,arg)))
+				       `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (escape-for-html (null-value-check ,(car arg) ,(cadr arg))))
+				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) (escape-for-html ,arg))))
 			       args)))))))
 
 
