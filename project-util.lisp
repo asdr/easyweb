@@ -4,9 +4,9 @@
 			    ("_model" . "lisp")
 			    ("_settings" . "lisp")
 			    ("_view" . "lisp")
-			    ("prototype-app1" . "asd")))
+			    ("template-app" . "asd")))
 
-(defvar *easyweb-prototype-dir* "/home/asdr/projects/easyweb/prototype-app1")
+(defvar *easyweb-template-application-dir* "/home/asdr/projects/easyweb/template-app")
 
 (defun create-appender (initial-list)
   (let ((acc-list initial-list)
@@ -17,16 +17,14 @@
 	(setf tail (nthcdr (1- (length al)) al))))))
 
 
-(defun write-to-file (in out)
-  (do ((line (read-line in nil 'eof) (read-line in nil 'eof)))
-      ((eql line 'eof) t)
-    (format out "~A~A" line #\Newline)))
+(defun write-to-file (in out project-name)
+  (html-template:fill-and-print-template (html-template:create-template-printer in) (list ':APPLICATION_NAME project-name) :stream out))
 
-(defun clone-file (if-path of-path)
+(defun clone-file (if-path of-path project-name)
   (with-open-file (in if-path :direction :input)
     (with-open-file (out of-path :direction :output
 			         :if-exists :supersede)
-      (write-to-file in out))))
+      (write-to-file in out project-name))))
 
 (defun remove-trailing-slash (string)
   (if (= (position #\/ string :from-end t)
@@ -54,11 +52,11 @@
 	  (loop 
 	     for (name . type) in *files-be-cloned*
 	     do (let ((if-path (make-pathname 
-				:directory *easyweb-prototype-dir*
+				:directory *easyweb-template-application-dir*
 				:name name
 				:type type))
 		      (of-path (make-pathname 
 				:directory path
 				:name name
 				:type type)))
-		  (clone-file if-path of-path))))))))
+		  (clone-file if-path of-path project-name))))))))

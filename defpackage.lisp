@@ -4,7 +4,8 @@
   (:use #:cl
 	#:easyweb.util
 	#:hunchentoot)
-  (:export #:defview
+  (:export #:make-project
+	   #:defview
 	   #:define-url-patterns
 	   #:server-start
 	   #:server-stop))
