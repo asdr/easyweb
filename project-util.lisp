@@ -6,31 +6,33 @@
 			    ("_view" . "lisp")
 			    ("template-app" . "asd")))
 
-(defvar *easyweb-template-application-dir* "/home/admin-o/pjs/easyweb/template-app")
+(defvar *easyweb-template-application-dir* "/home/asdr/projects/easyweb/template-app")
 
-(defun create-appender (initial-list)
-  (let ((acc-list initial-list)
-	(tail (nthcdr (1- (length initial-list)) initial-list)))
-    (lambda (&rest lists)
-      (dolist (al lists acc-list)
-	(setf (cdr tail) al)
-	(setf tail (nthcdr (1- (length al)) al))))))
+(defun write-from-template (in out variables)
+  (let ((template-printer (html-template:create-template-printer in)))
+    (html-template:fill-and-print-template template-printer 
+					   variables
+					   :stream out)))
 
-
-(defun write-to-file (in out project-name)
-  (html-template:fill-and-print-template (html-template:create-template-printer in) (list ':APPLICATION_NAME project-name) :stream out))
-
-(defun clone-file (if-path of-path project-name)
+(defun clone-file (if-path of-path &rest variables &key application_name)
   (with-open-file (in if-path :direction :input)
     (with-open-file (out of-path :direction :output
 			         :if-exists :supersede)
-      (write-to-file in out project-name))))
+      (write-from-template in out variables))))
 
 (defun remove-trailing-slash (string)
   (if (= (position #\/ string :from-end t)
 	 (1- (length string)))
       (subseq string 0 (1- (length string)))
       string))
+
+(defun seperate-path (path)
+  (let* ((correct-path (remove-trailing-slash path))
+	 (last-position (1+ (position #\/
+				      correct-path
+				      :from-end t))))
+    (values (subseq correct-path 0 last-position)
+	    (subseq correct-path last-position))))
 
 (defun make-project (project-path)
   (let* ((project-path-n (remove-trailing-slash project-path))
@@ -62,4 +64,4 @@
 				  :directory path
 				  :name name
 				  :type type))))
-		  (clone-file if-path of-path project-name))))))))
+		  (clone-file if-path of-path :application_name project-name))))))))

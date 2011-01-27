@@ -24,6 +24,13 @@
       tree
       (mapcar #'macroexpand-tree tree)))
 
+(defun create-appender (initial-list)
+  (let ((acc-list initial-list)
+	(tail (nthcdr (1- (length initial-list)) initial-list)))
+    (lambda (&rest lists)
+      (dolist (al lists acc-list)
+	(setf (cdr tail) al)
+	(setf tail (nthcdr (1- (length al)) al))))))
 
 #| - LET OVER LAMBDA UTILITIES - 
 (defun mkstr (&rest args)
