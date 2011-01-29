@@ -5,19 +5,6 @@
   (:export #:*available-applications*
 	   #:*template-directory*))
 
-(in-package :easyweb)
-
-(defun set-application-loaded (application-name)
-  (let ((application (find application-name
-			   easyweb.settings:*available-applications*
-			   :test #'string=
-			   :key #'car)))
-    (when application
-      (setf (cdr application)
-	    (cons t nil)))))
-
-(cl:export 'set-application-loaded) 
-
 (in-package :easyweb.settings)
 
 (defparameter *template-directory* "template")
@@ -32,9 +19,9 @@
 (defparameter *use-available-check* nil)
 
 (defparameter *available-applications* 
-  (vector '("test3" . nil)
-	  '("easyweb-default" . nil)
-	  '("prototype-app1" . nil)))
+  '(("test10" . nil)))
+	  ;'("easyweb-default" . nil)
+	  ;'("prototype-app1" . nil)))
 	  
 
 

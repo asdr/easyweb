@@ -1,11 +1,4 @@
-(in-package :common-lisp-user)
-
-(defpackage :easyweb.util
-  (:use #:cl)
-  (:export #:enclose-string
-	   #:null-value-check))
-
-(in-package :easyweb.util)
+(in-package :easyweb)
 
 ;;in order to get around the issue with "describe" function,
 ;;strings must be enclosed with double-quotes.
@@ -32,7 +25,7 @@
 	(setf (cdr tail) al)
 	(setf tail (nthcdr (1- (length al)) al))))))
 
-#| - LET OVER LAMBDA UTILITIES - 
+#| - LET OVER LAMBDA UTILITIES - |#
 (defun mkstr (&rest args)
   (with-output-to-string (s)
     (dolist (a args) (princ a s))))
@@ -102,8 +95,7 @@
           ,(progn ,@body)))))
 
 ;;EXAMPLE#1
-(defmacro! square (o!x)
-  `(progn
-     (format t "[~A gave ~A]~%" ',o!x ,g!x)
-     (* ,g!x ,g!x)))
-|#
+;(defmacro! square (o!x)
+;  `(progn
+;     (format t "[~A gave ~A]~%" ',o!x ,g!x)
+;     (* ,g!x ,g!x)))

@@ -9,12 +9,13 @@
     :name "easyweb"
     :serial t
     :depends-on (#:dsgner
+		 #:swank
 		 #:hunchentoot
 		 #:html-template)
-    :components ((:file "util")
-		 (:file "url-handler") ;;url-handling and dispatching for hunchentoot
-		 (:file "defpackage")
+    :components ((:file "defpackage")
+		 (:file "util")
 		 (:file "settings")
+		 (:file "url-handler")
 		 (:file "server")
 		 (:file "easyweb")
 		 (:file "project-util")
