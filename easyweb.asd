@@ -17,7 +17,7 @@
 		 (:file "settings")
 		 (:file "url-handler")
 		 (:file "server")
-		 (:file "easyweb")
+		 (:file "misc")
 		 (:file "project-util")
 		 (:file "html")
 		 (:file "initialize")))

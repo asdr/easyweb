@@ -2,8 +2,7 @@
 
 (defpackage :easyweb.settings
   (:use #:cl)
-  (:export #:*available-applications*
-	   #:*template-directory*))
+  (:export #:*template-directory*))
 
 (in-package :easyweb.settings)
 
@@ -15,15 +14,4 @@
 ;;html-template settings
 (setf html-template:*template-start-marker* *template-start-tag*
       html-template:*template-end-marker* *template-end-tag*)
-
-(defparameter *use-available-check* nil)
-
-(defparameter *available-applications* 
-  '(("test10" . nil)))
-	  ;'("easyweb-default" . nil)
-	  ;'("prototype-app1" . nil)))
-	  
-
-
-
 

@@ -57,8 +57,6 @@ but not in define-easy-handler macro. So below is that for...
 (cl:export 'dispatch-url-handlers)
 (cl:export 'define-url-handler)
 #| ---------------------------------------------------------------------------------- |#
-
-
 (in-package :easyweb)
 
 (defun get-lambda-list (fn)
@@ -83,12 +81,12 @@ but not in define-easy-handler macro. So below is that for...
 	
 
 (defun handle-mapping (mapping prefix)
-  (let* ((uri (car mapping))
-	 (uri-type (car uri))
-	 (uri-content (format nil "~A~A" prefix (cadr uri))) 
-	 (handler (cadr mapping))
-	 (handler-name (string handler))
-	 (request-method (cond ((eq (search "/get" handler-name :test #'string-equal)
+  (let ((uri (car mapping)))
+    (let ((uri-type (car uri))
+	  (uri-content (format nil "~A~A" prefix (cadr uri))))
+      (let* ((handler (cadr mapping))
+	     (handler-name (string handler))
+	     (request-method (cond ((eq (search "/get" handler-name :test #'string-equal)
 				    (- (length handler-name) 4))
 				:GET)
 			       ((eq (search "/post" handler-name :test #'string-equal)
@@ -109,14 +107,15 @@ but not in define-easy-handler macro. So below is that for...
 				   (if (listp arg)
 				       `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (escape-for-html (null-value-check ,(car arg) ,(cadr arg))))
 				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) (escape-for-html ,arg))))
-			       args)))))))
+			       args)))))))))
 
 
-(defmacro map-url-patterns (prefix &body body)
+(defmacro define-url-patterns (prefix &body body)
   `(progn ,@(mapcar #'(lambda(mapping)
 			(funcall #'handle-mapping mapping prefix)) 
 		    body)))
 
+#|
 (defmacro/g! define-url-patterns (prefix &body body)
   `(let ((,application/g! (find *application-name* 
 				easyweb.settings:*available-applications* 
@@ -128,3 +127,4 @@ but not in define-easy-handler macro. So below is that for...
 	       (and ,application/g! 
 		    (null (cdr ,application/g!))))
        (map-url-patterns ,prefix ,@body))))
+|#
