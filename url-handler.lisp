@@ -105,8 +105,8 @@ but not in define-easy-handler macro. So below is that for...
 		      args)
 	   (,handler ,@(mapcan #'(lambda (arg)
 				   (if (listp arg)
-				       `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (escape-for-html (null-value-check ,(car arg) ,(cadr arg))))
-				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) (escape-for-html ,arg))))
+				       `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (null-value-check ,(car arg) ,(cadr arg)))
+				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) ,arg)))
 			       args)))))))))
 
 

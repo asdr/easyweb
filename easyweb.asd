@@ -18,7 +18,7 @@
 		 (:file "url-handler")
 		 (:file "server")
 		 (:file "misc")
-		 (:file "project-util")
+		 (:file "application-util")
 		 (:file "html")
 		 (:file "initialize")))
 

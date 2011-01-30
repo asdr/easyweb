@@ -39,4 +39,3 @@
        ,@body)
      
      (cl:export ',name cl:*package*)))
-

@@ -2,7 +2,7 @@
 
 (defpackage :easyweb
   (:use #:cl)
-  (:export #:make-project
+  (:export #:make-application
 	   #:defview
 	   #:define-url-patterns
 	   #:server-start

@@ -8,4 +8,4 @@
 (setf hunchentoot:*dispatch-table* (list #'hunchentoot:dispatch-url-handlers))
 
 ;;load available applications
-(quickload-available-applications )
+;;(quickload-available-applications )
