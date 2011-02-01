@@ -16,7 +16,6 @@
       ((:absolute "argtest") argtest)
       ((:absolute "template1") template1/get)
       ((:regex "asdr[0-9]+$") mervecigim))
-  
-  
+    
   (set-application-loaded easyweb::*application-name*))
     

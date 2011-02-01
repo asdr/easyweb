@@ -43,7 +43,9 @@ but not in define-easy-handler macro. So below is that for...
       description
     `(progn 
        (setq *url-handlers* (delete-if #'(lambda (list)
-					   (and (equal ,(cdr uri) (cdr (first list)))
+					   (and (or ,acceptor-names
+						    (equal ,acceptor-names (second list)))
+						(equal ,(cdr uri) (cdr (first list)))
 						(eq ,default-request-type (fourth list))))
 				       *url-handlers*))
        (push (list ',uri ,acceptor-names ',name ',default-request-type) *url-handlers*)
@@ -58,6 +60,8 @@ but not in define-easy-handler macro. So below is that for...
 (cl:export 'define-url-handler)
 #| ---------------------------------------------------------------------------------- |#
 (in-package :easyweb)
+
+(defparameter *application-mapping-table* nil)
 
 (defun get-lambda-list (fn)
   ;;may be platform dependent code
@@ -80,7 +84,7 @@ but not in define-easy-handler macro. So below is that for...
 	(read-from-string "(&rest argumets &key)"))))
 	
 
-(defun handle-mapping (mapping prefix)
+(defun handle-mapping (mapping prefix acceptor-name)
   (let ((uri (car mapping)))
     (let ((uri-type (car uri))
 	  (uri-content (format nil "~A~A" prefix (cadr uri))))
@@ -97,7 +101,9 @@ but not in define-easy-handler macro. So below is that for...
     (destructuring-bind (none0 arguments &rest rest)
 	(get-lambda-list handler)
       (let ((args (cdr rest))) ;;because the first of rest is &key
-	`(hunchentoot::define-url-handler (,(gensym) :uri ,(cons uri-type uri-content) :default-request-type ,request-method)
+	`(hunchentoot::define-url-handler (,(gensym) :uri ,(cons uri-type uri-content) 
+					             :acceptor-names (list ,acceptor-name)
+					             :default-request-type ,request-method)
 	     ,(mapcar #'(lambda(arg)
 			  (if (listp arg)
 			      (car arg)
@@ -110,21 +116,17 @@ but not in define-easy-handler macro. So below is that for...
 			       args)))))))))
 
 
-(defmacro define-url-patterns (prefix &body body)
-  `(progn ,@(mapcar #'(lambda(mapping)
-			(funcall #'handle-mapping mapping prefix)) 
-		    body)))
+(defmacro map-url-patterns (application-name acceptor-name)
+  (let ((defined-mapping (assoc application-name *application-mapping-table* :test #'string=)))
+    (format t "~A~%" defined-mapping)
+    (when defined-mapping
+      (destructuring-bind (prefix mappings)
+	  (cdr defined-mapping)
+	`(progn ,@(mapcar #'(lambda(mapping)
+			      (funcall #'handle-mapping mapping prefix acceptor-name)) 
+			  mappings))))))
 
-#|
-(defmacro/g! define-url-patterns (prefix &body body)
-  `(let ((,application/g! (find *application-name* 
-				easyweb.settings:*available-applications* 
-				:test #'string=
-				:key #'car)))
-     
-     ;;dont let mapping more than one
-     (when (or (null ,application/g!)
-	       (and ,application/g! 
-		    (null (cdr ,application/g!))))
-       (map-url-patterns ,prefix ,@body))))
-|#
+(defmacro define-url-patterns (prefix &body body)
+  `(unless (assoc *application-name* *application-mapping-table* :test #'string=)
+     (push (cons *application-name* (list ,prefix ',body)) 
+	   *application-mapping-table*)))

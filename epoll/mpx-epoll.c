@@ -6,16 +6,11 @@
 
 #include <sys/poll.h>
 
-void addEvent(int epfd, const char* filename) {
+void addEvent(int epfd, int fd) {
   int fd;
   struct epoll_event event;
 
-  if ((fd = open(filename, O_RDONLY | O_NONBLOCK)) < 0) {
-    perror("open");
-    exit(1);
-  }
-
-  event.events = EPOLLIN | EPOLLOUT;// | EPOLLPRI | EPOLLERR | EPOLLHUP;
+  event.events = EPOLLIN | EPOLLOUT;
   event.data.fd = fd;
 
   if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &event)) {
@@ -31,6 +26,7 @@ int main (void) {
   struct epoll_event events[2];
   int num;
   int numFds;
+  int fd1, fd2;
 
   epfd = epoll_create(2);
 
@@ -39,8 +35,18 @@ int main (void) {
     return 1;
   }
 
-  addEvent(epfd, "p1");
-  addEvent(epfd, "p2");
+  if ((fd1 = open("p1", O_RDONLY | O_NONBLOCK)) < 0) {
+    perror("open_p1");
+    return 1;
+  }
+
+  if ((fd2 = open("p2", O_RDONLY | O_NONBLOCK)) < 0) {
+    perror("open_p2");
+    return 1;
+  }
+
+  addEvent(epfd, fd1);
+  addEvent(epfd, fd2);
 
   numFds = 2;
   while(numFds) {

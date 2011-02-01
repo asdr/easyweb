@@ -30,17 +30,26 @@
   (hunchentoot:stop *httpd*)
   (setf *httpd* nil))
 
-(defun get-easy-starter (&key (port *listen-port*) (address *listen-address*) name)
-  (let ((key (format nil "~A" (cons address port))))
+(defun easy-starter-hash (address port)
+  (format nil "~A" (cons address port)))
+
+(defun get-easy-starter (&key (port *listen-port*) (address *listen-address*))
+  (let ((key (easy-starter-hash address port))) 
     (or (gethash key *acceptor-table*)
 	(setf (gethash key *acceptor-table*)
 	      (make-easy-starter :acceptor (make-instance 'hunchentoot:acceptor 
 							  :address address
 							  :port port
-							  :name name))))))
+							  :name key))))))
 
 (defun application-start (application-name &key (port *listen-port*) (address *listen-address*))
   (when application-name
-    (let ((starter (get-easy-starter :address address
-				     :port port)))
-      )))
+    (let* ((starter (get-easy-starter :address address
+				      :port port))
+	   (acceptor (easy-starter-acceptor starter)))
+      (format t "~A~%~A~A~%" starter acceptor (hunchentoot:acceptor-name acceptor))
+      (when (and starter
+		 acceptor
+		 (map-url-patterns application-name (hunchentoot:acceptor-name acceptor)))
+	(hunchentoot:start acceptor)
+	(format *standard-output* "Application started: ~S~%" application-name)))))
