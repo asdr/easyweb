@@ -48,8 +48,9 @@
 				      :port port))
 	   (acceptor (easy-starter-acceptor starter)))
       (format t "~A~%~A~A~%" starter acceptor (hunchentoot:acceptor-name acceptor))
+      (format t "~A~%" (and starter acceptor))
       (when (and starter
-		 acceptor
-		 (map-url-patterns application-name (hunchentoot:acceptor-name acceptor)))
+		 acceptor)
+	(map-url-patterns application-name (hunchentoot:acceptor-name acceptor))
 	(hunchentoot:start acceptor)
-	(format *standard-output* "Application started: ~S~%" application-name)))))
+	(format t "Application started: ~S~%" application-name)))))

@@ -115,16 +115,20 @@ but not in define-easy-handler macro. So below is that for...
 				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) ,arg)))
 			       args)))))))))
 
+(defmacro map-inner (prefix acceptor-name mappings)
+  `(progn
+     ,@(mapcar #'(lambda(mapping)
+		   (format t "~A~%" mapping)
+		   (funcall #'handle-mapping mapping prefix acceptor-name)) 
+	       mappings)))
 
-(defmacro map-url-patterns (application-name acceptor-name)
-  (let ((defined-mapping (assoc application-name *application-mapping-table* :test #'string=)))
-    (format t "~A~%" defined-mapping)
-    (when defined-mapping
-      (destructuring-bind (prefix mappings)
-	  (cdr defined-mapping)
-	`(progn ,@(mapcar #'(lambda(mapping)
-			      (funcall #'handle-mapping mapping prefix acceptor-name)) 
-			  mappings))))))
+
+(defmacro! map-url-patterns (o!application-name o!acceptor-name)
+  `(let ((,g!defined-mapping (assoc ,g!application-name *application-mapping-table* :test #'string=)))
+     (when ,g!defined-mapping
+       (destructuring-bind (,g!prefix ,g!mappings)
+	   (cdr ,g!defined-mapping)
+	 (map-inner ,g!prefix ,g!acceptor-name ,g!mappings)))))
 
 (defmacro define-url-patterns (prefix &body body)
   `(unless (assoc *application-name* *application-mapping-table* :test #'string=)
