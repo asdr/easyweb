@@ -111,24 +111,25 @@ but not in define-easy-handler macro. So below is that for...
 		      args)
 	   (,handler ,@(mapcan #'(lambda (arg)
 				   (if (listp arg)
-				       `(,(chunga:as-keyword (string-downcase (car arg)) :destructivep nil) (null-value-check ,(car arg) ,(cadr arg)))
-				       `(,(chunga:as-keyword (string-downcase arg) :destructivep nil) ,arg)))
+				       `(,(chunga:as-keyword (string-downcase (car arg)) 
+							     :destructivep nil) 
+					  (null-value-check ,(car arg) ,(cadr arg)))
+
+				       `(,(chunga:as-keyword (string-downcase arg) 
+							     :destructivep nil) 
+					  ,arg)))
 			       args)))))))))
 
-(defmacro map-inner (prefix acceptor-name mappings)
+(defun map-inner (prefix acceptor-name mappings)
   `(progn
      ,@(mapcar #'(lambda(mapping)
-		   (format t "~A~%" mapping)
 		   (funcall #'handle-mapping mapping prefix acceptor-name)) 
 	       mappings)))
 
-
 (defmacro! map-url-patterns (o!application-name o!acceptor-name)
-  `(let ((,g!defined-mapping (assoc ,g!application-name *application-mapping-table* :test #'string=)))
+  `(let ((,g!defined-mapping (cdr (assoc ,g!application-name *application-mapping-table* :test #'string=))))
      (when ,g!defined-mapping
-       (destructuring-bind (,g!prefix ,g!mappings)
-	   (cdr ,g!defined-mapping)
-	 (map-inner ,g!prefix ,g!acceptor-name ,g!mappings)))))
+       (map-inner (first ,g!defined-mapping) ,g!acceptor-name (second ,g!defined-mapping)))))
 
 (defmacro define-url-patterns (prefix &body body)
   `(unless (assoc *application-name* *application-mapping-table* :test #'string=)
