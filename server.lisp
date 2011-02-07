@@ -49,6 +49,6 @@
 	   (acceptor (easy-starter-acceptor starter)))
       (when (and starter
 		 acceptor)
-	(map-url-patterns application-name (hunchentoot:acceptor-name acceptor))
-	(hunchentoot:start acceptor)
+	(easy-load-application application-name (hunchentoot:acceptor-name acceptor))
+	;(hunchentoot:start acceptor)
 	(format t "Application started: ~S~%" application-name)))))

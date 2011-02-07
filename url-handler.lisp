@@ -45,7 +45,7 @@ but not in define-easy-handler macro. So below is that for...
        (setq *url-handlers* (delete-if #'(lambda (list)
 					   (and (or ,acceptor-names
 						    (equal ,acceptor-names (second list)))
-						(equal ,(cdr uri) (cdr (first list)))
+			 			(equal ,(cdr uri) (cdr (first list)))
 						(eq ,default-request-type (fourth list))))
 				       *url-handlers*))
        (push (list ',uri ,acceptor-names ',name ',default-request-type) *url-handlers*)
@@ -84,7 +84,7 @@ but not in define-easy-handler macro. So below is that for...
 	(read-from-string "(&rest argumets &key)"))))
 	
 
-(defun handle-mapping (mapping prefix acceptor-name)
+(defmacro map-one-url (mapping prefix acceptor-name)
   (let ((uri (car mapping)))
     (let ((uri-type (car uri))
 	  (uri-content (format nil "~A~A" prefix (cadr uri))))
@@ -120,16 +120,15 @@ but not in define-easy-handler macro. So below is that for...
 					  ,arg)))
 			       args)))))))))
 
-(defun map-inner (prefix acceptor-name mappings)
-  `(progn
-     ,@(mapcar #'(lambda(mapping)
-		   (funcall #'handle-mapping mapping prefix acceptor-name)) 
-	       mappings)))
 
-(defmacro! map-url-patterns (o!application-name o!acceptor-name)
-  `(let ((,g!defined-mapping (cdr (assoc ,g!application-name *application-mapping-table* :test #'string=))))
-     (when ,g!defined-mapping
-       (map-inner (first ,g!defined-mapping) ,g!acceptor-name (second ,g!defined-mapping)))))
+(defmacro! easy-load-application (o!application-name o!acceptor-name)
+  `(let ((,g!mappings (assoc ,g!application-name *application-mapping-table* :test #'string=)))
+     (when ,g!mappings
+       (let ((,g!prefix (cadr ,g!mappings))
+	     (,g!dmaps (caddr ,g!mappings)))
+	 (dolist (mapping ,g!dmaps)
+	   ;(format t "~S~%" mapping))))))
+	   `(map-one-url ,mapping ,,g!prefix ,,g!acceptor-name))))))
 
 (defmacro define-url-patterns (prefix &body body)
   `(unless (assoc *application-name* *application-mapping-table* :test #'string=)
