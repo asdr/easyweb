@@ -2,11 +2,20 @@
 
 (defpackage :easyweb
   (:use #:cl)
-  (:export #:easy-load-application
-	   #:make-application
-	   #:defview
+  (:export ;;APPLICATION-HANDLER
+           #:application-load
+	   #:application-unload
 	   #:define-url-patterns
-	   #:server-start
-	   #:server-stop))
+
+	   ;;APPLICATION-UTIL
+	   #:make-application
+
+	   ;;MISC
+	   #:defview
+	   	   
+	   ;;SERVER
+	   #:get-easy-starter
+	   #:get-acceptor
+))
 
 (in-package :easyweb)

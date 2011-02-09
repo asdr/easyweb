@@ -20,16 +20,6 @@
 
 (defparameter *swank* nil) 
 
-(defun server-start (&key (port *listen-port*) (address *listen-address*))
-  (setf *httpd* (hunchentoot:start (make-instance 'hunchentoot:acceptor 
-						  :port port
-						  :name "easyweb-default-acceptor"
-						  :address address))))
-
-(defun server-stop ()
-  (hunchentoot:stop *httpd*)
-  (setf *httpd* nil))
-
 (defun easy-starter-hash (address port)
   (format nil "~A" (cons address port)))
 
@@ -42,13 +32,7 @@
 							  :port port
 							  :name key))))))
 
-(defun application-start (application-name &key (port *listen-port*) (address *listen-address*))
-  (when application-name
-    (let* ((starter (get-easy-starter :address address
-				      :port port))
-	   (acceptor (easy-starter-acceptor starter)))
-      (when (and starter
-		 acceptor)
-	(easy-load-application application-name (hunchentoot:acceptor-name acceptor))
-	;(hunchentoot:start acceptor)
-	(format t "Application started: ~S~%" application-name)))))
+(defun get-acceptor (&key (port *listen-port*) (address *listen-address*))
+  (let ((starter (get-easy-starter address port)))
+    (when starter
+      (easy-starter-acceptor starter))))
