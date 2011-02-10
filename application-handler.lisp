@@ -6,7 +6,7 @@
 (defstruct (application-context
 	     (:conc-name context-))
   name
-  (acceptor-names t) ;default acceptors of application
+  (acceptor-name t) ;default acceptors of application
   mappings
   loaded-p)
 
@@ -24,15 +24,25 @@
 	   (acceptor (easy-starter-acceptor starter)))
       (when (and starter
 		 acceptor)
-	(application-load application-name (hunchentoot:acceptor-name acceptor))
-	;(hunchentoot:start acceptor)
+	(application-load application-name :acceptor-name (hunchentoot:acceptor-name acceptor))
+	(hunchentoot:start acceptor)
 	(format t "Application started: ~S~%" application-name)))))
 
-(defun application-load (application-name)
-  )
+(defun application-load (application-name &key (acceptor-name t))
+  (loop 
+     for context in *application-contexts*
+     when (and context
+	       (string-equal application-name (context-name context)))
+     do (progn 
+	  (setf (context-acceptor-name context) acceptor-name)
+	  (setf (context-loaded-p context) t))))
 
 (defun application-unload (application-name)
-  )
+  (loop 
+     for context in *application-contexts*
+     when (and context
+	       (string-equal application-name (context-name context)))
+     do (setf (context-loaded-p context) nil)))
 
 (defun get-lambda-list (fn)
   ;;may be platform dependent code
@@ -99,31 +109,36 @@
 (defun dispatch-url-handlers (request)
   (loop 
      for context in *application-contexts*
-     do (let ((uri (mapping-uri (context-mapping context))))
-	  (let ((uri-type (car uri))
-		(uri-context (cdr uri))
-		(acceptor-name (context-acceptor-name context))
-		(easy-handler (context-handler context))
-		(request-type (context-request-method context)))
-	    (when (and (or (eq acceptor-name t)
-			   (string= (hunchentoot::acceptor-name *acceptor*) acceptor-name))
-		       (or (eq :BOTH request-type)
-			   (eq request-type (hunchentoot::request-method request)))
-		       (cond ((stringp uri-content)
-			      (case uri-type
-				(:absolute ;;ABOLUTE matching
-				 (string= uri-content (hunchentoot::script-name request)))
-				(:prefix ;;PREFIX matching
-				 (let ((mismatch (mismatch (hunchentoot::script-name request) uri-content
-							   :test #'char=)))
-				   (and (or (null mismatch)
-					    (>= mismatch (length uri-content))))))
-				(:regex ;;Regular EXP. matching
-				 (let ((scanner (cl-ppcre:create-scanner uri-content)))
-				   (not (null (cl-ppcre:scan scanner (hunchentoot::script-name request))))))))
-			     (t (funcall uri-content request))))
-	      (return easy-handler))))))
-
+     when context
+     do (loop
+	   for mapping in (context-mappings context)
+	   do (let ((uri (mapping-uri mapping)))
+		(let ((uri-type (car uri))
+		      (uri-content (cdr uri))
+		      (acceptor-name (context-acceptor-name context))
+		      (easy-handler (mapping-handler mapping))
+		      (request-type (mapping-request-method mapping)))
+		  (when (and (or (eq acceptor-name t)
+				 (string= (hunchentoot:acceptor-name hunchentoot:*acceptor*) acceptor-name))
+			     (or (eq :BOTH request-type)
+				 (eq request-type (hunchentoot:request-method request)))
+			     (cond ((stringp uri-content)
+				    (case uri-type
+				      (:absolute ;;ABOLUTE matching
+				       (string= uri-content (hunchentoot:script-name request)))
+				      (:prefix ;;PREFIX matching
+				       (let ((mismatch (mismatch (hunchentoot:script-name request) uri-content
+								 :test #'char=)))
+					 (and (or (null mismatch)
+						  (>= mismatch (length uri-content))))))
+				      (:regex ;;Regular EXP. matching
+				       (let ((scanner (cl-ppcre:create-scanner uri-content)))
+					 (not (null (cl-ppcre:scan scanner (hunchentoot:script-name request))))))))
+				   (t (funcall uri-content request))))
+		    (progn
+		      (format t "here i am: ~S~%" easy-handler)
+		      (return easy-handler))))))))
+  
 (defmacro define-url-handler (description lambda-list &body body)
   (when (atom description)
     (setq description (list description)))
@@ -144,7 +159,7 @@
 							    (equal ,(cdr uri) (cdr (mapping-uri a-mapping)))
 							    (eq ,default-request-type (mapping-request-method a-mapping))))
 						   (context-mappings context)))
-       (push (make-url-mapping :uri ,uri 
+       (push (make-url-mapping :uri (cons ,(car uri) ,(cdr uri)) 
 			       :acceptor-name ,acceptor-name 
 			       :handler ',name 
 			       :request-method ',default-request-type) 
@@ -152,6 +167,7 @@
        
        (defun ,name (&key ,@(loop for part in lambda-list
 			       collect (hunchentoot::make-defun-parameter part
-									  default-parameter-type
-									  default-request-type)))
+									 default-parameter-type
+									 default-request-type)))
+	 (defparameter **ASDR** (format t "ASDR IN .....==="))
 	 ,@body))))
