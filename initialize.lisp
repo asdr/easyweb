@@ -5,7 +5,7 @@
       hunchentoot:*show-lisp-backtraces-p* t)
 
 ;;set our new dispatcher to hunchentoot
-(setf hunchentoot:*dispatch-table* (list #'hunchentoot:dispatch-url-handlers))
+(setf hunchentoot:*dispatch-table* (list #'dispatch-url-handlers))
 
 ;;load available applications
 ;;(quickload-available-applications )

@@ -9,13 +9,14 @@
     :name "easyweb"
     :serial t
     :depends-on (#:dsgner
+		 #:cl-ppcre
 		 #:swank
 		 #:hunchentoot
 		 #:html-template)
     :components ((:file "defpackage")
 		 (:file "util")
 		 (:file "settings")
-		 (:file "url-handler")
+		 (:file "application-handler")
 		 (:file "server")
 		 (:file "misc")
 		 (:file "application-util")
