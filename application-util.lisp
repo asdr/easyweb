@@ -6,7 +6,8 @@
 			    ("_view" . "lisp")
 			    ("template-app" . "asd")))
 
-(defvar *easyweb-template-application-dir* "/home/asdr/projects/easyweb/template-app")
+(defvar *easyweb-template-application-dir* "/home/admin-o/pjs/easyweb/template-app")
+;(defvar *easyweb-template-application-dir* "/home/asdr/projects/easyweb/template-app")
 
 (defun write-from-template (in out variables)
   (let ((template-printer (html-template:create-template-printer in)))

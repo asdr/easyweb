@@ -109,7 +109,8 @@
 (defun dispatch-url-handlers (request)
   (loop 
      for context in *application-contexts*
-     when context
+     when (and context
+	       (context-loaded-p context))
      do (loop
 	   for mapping in (context-mappings context)
 	   do (let ((uri (mapping-uri mapping)))
@@ -135,9 +136,7 @@
 				       (let ((scanner (cl-ppcre:create-scanner uri-content)))
 					 (not (null (cl-ppcre:scan scanner (hunchentoot:script-name request))))))))
 				   (t (funcall uri-content request))))
-		    (progn
-		      (format t "here i am: ~S~%" easy-handler)
-		      (return easy-handler))))))))
+		    (return-from dispatch-url-handlers easy-handler)))))))
   
 (defmacro define-url-handler (description lambda-list &body body)
   (when (atom description)
