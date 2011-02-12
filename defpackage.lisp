@@ -3,6 +3,7 @@
 (defpackage :easyweb
   (:use #:cl)
   (:export ;;APPLICATION-HANDLER
+           #:application-start
            #:application-load
 	   #:application-unload
 	   #:define-url-patterns
@@ -16,6 +17,7 @@
 	   ;;SERVER
 	   #:get-easy-starter
 	   #:get-acceptor
-))
+	  
+	   ))
 
 (in-package :easyweb)
