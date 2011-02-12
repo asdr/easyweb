@@ -2,7 +2,6 @@
 
 (defstruct (easy-starter)
   "Easy Starter"
-  handle
   acceptor
   applications)
 
@@ -18,7 +17,10 @@
 
 (defparameter *swank-port* 4991)
 
-(defparameter *swank* nil) 
+
+;;start swank server
+(defparameter *swank*
+  (swank:create-server :port *swank-port* :dont-close t))
 
 (defun easy-starter-hash (address port)
   (format nil "~A" (cons address port)))
@@ -31,8 +33,12 @@
 							  :address address
 							  :port port
 							  :name key))))))
+ ;(defmethod get-easy-starter (acceptor-name)
+ ;  (gethash acceptor-name *acceptor-table*))
+
 
 (defun get-acceptor (&key (port *listen-port*) (address *listen-address*))
   (let ((starter (get-easy-starter address port)))
     (when starter
       (easy-starter-acceptor starter))))
+

@@ -4,6 +4,7 @@
   (:use #:cl)
   (:export ;;APPLICATION-HANDLER
            #:application-start
+	   #:application-stop
            #:application-load
 	   #:application-unload
 	   #:define-url-patterns

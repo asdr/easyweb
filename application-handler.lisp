@@ -20,22 +20,41 @@
     (let* ((starter (get-easy-starter :address address
 				      :port port))
 	   (acceptor (easy-starter-acceptor starter)))
-      (when (and starter
-		 acceptor)
+      (when (and starter acceptor)
 	(application-load application-name :acceptor-name (hunchentoot:acceptor-name acceptor))
+	(pushnew application-name (easy-starter-applications starter))
 	(hunchentoot:start acceptor)
 	(format t "Application started: ~S~%" application-name)))))
 
+(defun application-stop (application-name &optional (acceptor-name (format nil 
+									   "(~A . ~A)" 
+									   *listen-address* 
+									   *listen-port*)))
+  (when application-name
+    (let ((starter (gethash acceptor-name *acceptor-table*)))
+      (when starter
+	(let ((acceptor (easy-starter-acceptor starter)))
+	  (when acceptor
+	    (application-unload application-name :acceptor-name (hunchentoot:acceptor-name acceptor))
+	    (format t "Application stopped: ~S~%" application-name)
+	    (setf (easy-starter-applications starter) (delete-if #'(lambda(obj) 
+								     (string= application-name obj))
+								 (easy-starter-applications starter)))
+	    (when (zerop (length (easy-starter-applications starter)))
+	      (hunchentoot:stop acceptor)
+	      (format t "Acceptor stopped: ~S~%" (hunchentoot:acceptor-name acceptor)))))))))
+    
 (defun application-load (application-name &key acceptor-name)
   (loop 
      for context in *application-contexts*
      when (and context
 	       (string-equal application-name (context-name context)))
      do (if (null acceptor-name) 
-	    (setf (context-acceptor-status-list context) (list (cons nil t)))
+	    (setf (context-acceptor-status-list context) (list (cons (nil t))))
 	    (if (member acceptor-name (context-acceptor-status-list context) :test #'string= :key #'car)
 		(setf (cdr (context-acceptor-status-list context)) t)
 		(push (cons acceptor-name t) (context-acceptor-status-list context))))))
+  
 
 (defun application-unload (application-name &key acceptor-name)
   (loop 
@@ -167,3 +186,4 @@
 									 default-parameter-type
 									 default-request-type)))
 	 ,@body))))
+
