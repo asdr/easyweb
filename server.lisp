@@ -19,8 +19,8 @@
 
 
 ;;start swank server
-(defparameter *swank*
-  (swank:create-server :port *swank-port* :dont-close t))
+;;(defparameter *swank*
+;;  (swank:create-server :port *swank-port* :dont-close t))
 
 (defun easy-starter-hash (address port)
   (format nil "~A" (cons address port)))

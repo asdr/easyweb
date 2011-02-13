@@ -2,16 +2,20 @@
 
 (defpackage :easyweb.settings
   (:use #:cl)
-  (:export #:*template-directory*))
+  (:export #:+configuration-dir+
+	   #:+default-application-dir+
+	   #:+template-start-tag+
+	   #:+template-end-tag+))
 
 (in-package :easyweb.settings)
 
-(defparameter *template-directory* "template")
-(defparameter *template-start-tag* "(%")
-(defparameter *template-end-tag* "%)")
+(defconstant +configuration-dir+ (merge-pathnames ".easyweb/" (user-homedir-pathname)))
+(defconstant +default-application-dir+ (merge-pathnames "default-application/" +configuration-dir+))
+(defconstant +template-start-tag+ "(%")
+(defconstant +template-end-tag+ "%)")
 
 
 ;;html-template settings
-(setf html-template:*template-start-marker* *template-start-tag*
-      html-template:*template-end-marker* *template-end-tag*)
+(setf html-template:*template-start-marker* +template-start-tag+
+      html-template:*template-end-marker* +template-end-tag+)
 
