@@ -16,5 +16,11 @@
       ((:absolute "argtest") argtest)
       ((:absolute "template1") template1/get)
       ((:regex "asdr[0-9]+$") mervecigim))
+
+
+  ;;view resolver defines the view (template) files & paths
+  #|(define-view-resolver
+      (:path "/lsp" :file-matches "*.lsp")
+      (:path "/jsp" :file-matches "**/*.jsp"))|#
 )
     

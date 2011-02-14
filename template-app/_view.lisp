@@ -12,6 +12,15 @@
 
 ;; abow code can/should be inserted dynamically
 
+#|(defcontroller index-page/get (:uri "/test0/" :view "index-page")
+  ((msg "This is message from client"))
+  (let ((page-title "PAGE-TITLE")
+	(text "TEXT")
+	(messages '((:good-message? t :message "message1") (:good-message? nil :message "message2"))))
+    (list :page-title page-title
+	  :text text
+	  :messages messages)))|#
+
 (defview index-page/get ()
   (:doctype ()
     (:html ()
