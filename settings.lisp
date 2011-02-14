@@ -9,7 +9,7 @@
 
 (in-package :easyweb.settings)
 
-(defconstant +configuration-dir+ (merge-pathnames ".easyweb/" (user-homedir-pathname)))
+(defconstant +configuration-dir+ (merge-pathnames ".easyweb.d/" (user-homedir-pathname)))
 (defconstant +default-application-dir+ (merge-pathnames "default-application/" +configuration-dir+))
 (defconstant +template-start-tag+ "(%")
 (defconstant +template-end-tag+ "%)")
