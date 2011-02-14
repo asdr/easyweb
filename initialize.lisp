@@ -6,10 +6,9 @@
 (let ((configuration-file-path (probe-file (merge-pathnames "easyweb.conf" easyweb.settings:+configuration-dir+))))
   (unless (cl-fad:directory-exists-p easyweb.settings:+default-application-dir+)
     (when (ensure-directories-exist easyweb.settings:+default-application-dir+)
-      (let ((installation-path (merge-pathnames "projects/easyweb/"
-						(user-homedir-pathname)))
-	    (default-application-source (merge-pathnames "template-app/"
-							 installation-path)))
+      (let* ((installation-path (asdf:component-pathname (asdf:find-system :easyweb)))
+	     (default-application-source (merge-pathnames "template-app/"
+							  installation-path)))
 	(cl-fad:walk-directory default-application-source #'(lambda(file)
 							      (cl-fad:copy-file file 
 										(merge-pathnames (concatenate 'string
@@ -17,7 +16,7 @@
 													      "."
 													      (pathname-type file))
 												 easyweb.settings:+default-application-dir+))))))))
-												 
+
       
 
 (setf hunchentoot:*show-lisp-errors-p* t
