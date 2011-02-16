@@ -51,20 +51,23 @@
 	       (string-equal application-name (context-name context)))
      do (if (null acceptor-name) 
 	    (setf (context-acceptor-status-list context) (list (cons (nil t))))
-	    (if (member acceptor-name (context-acceptor-status-list context) :test #'string= :key #'car)
-		(setf (cdr (context-acceptor-status-list context)) t)
-		(push (cons acceptor-name t) (context-acceptor-status-list context))))))
+	    (let ((target (member acceptor-name (context-acceptor-status-list context) :test #'string= :key #'car)))
+	      (if target
+		  (setf (cdar (context-acceptor-status-list context)) t)
+		  (push (cons acceptor-name t) (context-acceptor-status-list context)))))))
   
 
 (defun application-unload (application-name &key acceptor-name)
-  (loop 
-     for context in *application-contexts*
-     when (and context
-	       (string-equal application-name (context-name context)))
-     do (if (null acceptor-name) 
-	    (setf (context-acceptor-status-list context) (list (cons nil nil)))
-	    (if (member acceptor-name (context-acceptor-status-list context) :test #'string= :key #'car)
-		(setf (cdr (context-acceptor-status-list context)) nil)))))
+  (if (null acceptor-name)
+      "Acceptor-name required!"
+      (loop 
+	 for context in *application-contexts*
+	 when (and context
+		   (string-equal application-name (context-name context)))
+	 do (setf (context-acceptor-status-list context) (delete-if #'(lambda(el)
+									(and (car el)
+									     (string= (car el) acceptor-name)))
+								    (context-acceptor-status-list context))))))
 
 
 (defun get-lambda-list (fn)
@@ -140,6 +143,7 @@
 			(uri-content (cdr uri))
 			(easy-handler (mapping-handler mapping))
 			(request-type (mapping-request-method mapping)))
+		    (format t "~A" (cdr (find (hunchentoot:acceptor-name hunchentoot:*acceptor*) asl :test #'string= :key #'car)))
 		    (when (and (cdr (find (hunchentoot:acceptor-name hunchentoot:*acceptor*) asl :test #'string= :key #'car))
 			       (or (eq :BOTH request-type)
 				   (eq request-type (hunchentoot:request-method request)))
@@ -157,6 +161,7 @@
 					   (not (null (cl-ppcre:scan scanner (hunchentoot:script-name request))))))))
 				     (t (funcall uri-content request))))
 		      (return-from dispatch-url-handlers easy-handler))))))))
+(in-package :easyweb)
   
 (defmacro define-url-handler (description lambda-list &body body)
   (when (atom description)
