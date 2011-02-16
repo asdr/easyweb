@@ -143,7 +143,7 @@
 			(uri-content (cdr uri))
 			(easy-handler (mapping-handler mapping))
 			(request-type (mapping-request-method mapping)))
-		    (format t "~A" (cdr (find (hunchentoot:acceptor-name hunchentoot:*acceptor*) asl :test #'string= :key #'car)))
+		    ;(format t "~A" (cdr (find (hunchentoot:acceptor-name hunchentoot:*acceptor*) asl :test #'string= :key #'car)))
 		    (when (and (cdr (find (hunchentoot:acceptor-name hunchentoot:*acceptor*) asl :test #'string= :key #'car))
 			       (or (eq :BOTH request-type)
 				   (eq request-type (hunchentoot:request-method request)))
@@ -161,7 +161,7 @@
 					   (not (null (cl-ppcre:scan scanner (hunchentoot:script-name request))))))))
 				     (t (funcall uri-content request))))
 		      (return-from dispatch-url-handlers easy-handler))))))))
-(in-package :easyweb)
+;(in-package :easyweb)
   
 (defmacro define-url-handler (description lambda-list &body body)
   (when (atom description)
