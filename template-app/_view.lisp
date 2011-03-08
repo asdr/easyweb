@@ -7,9 +7,6 @@
 
 (in-package :(% TMPL_VAR APPLICATION_NAME %).view)
 
-(defmacro defview (name (&rest arguments) &body body)
-  `(easyweb:defview ,name arguments ,arguments ,@body))
-
 ;; abow code can/should be inserted dynamically
 
 #|(defcontroller index-page/get (:uri "/test0/" :view "index-page")
@@ -21,26 +18,28 @@
 	  :text text
 	  :messages messages)))|#
 
-(defview index-page/get ()
-  (:doctype ()
-    (:html ()
-      (:head ()
-	(:title ()
-	  "Welcome to le-jango project!"))
-      (:body (:font-color "green")
-	(:p ()
-	  (:h2 ()
-	    "Hello, world! le-jango is working...")
-	  (:h4 ()
-	    "GET"))
-	(:p ()
-	  (:br ())
-	  "For more information, go on and jump into "
-	  (:a (:href "http://localhost/le-jango/docs.html")
-	      "tutorials")
-	  " page.")))))
+(let ((easyweb::*application-name* "app1"))
+  (easyweb::defview index-page/get :url-pattern (:prefix "") 
+		    ()
+		    (:doctype ()
+		      (:html ()
+			(:head ()
+			  (:title ()
+			    "Welcome to le-jango project!"))
+			(:body (:font-color "green")
+			  (:p ()
+			    (:h2 ()
+			      "Hello, world! le-jango is working...")
+			    (:h4 ()
+			      "GET"))
+			  (:p ()
+			    (:br ())
+			    "For more information, go on and jump into "
+			    (:a (:href "http://localhost/le-jango/docs.html")
+			      "tutorials")
+			    " page."))))))
 
-(defview index-page/post ((msg "asdr"))
+#|(defview index-page/post ((msg "asdr"))
   (:doctype ()
     (:html ()
       (:head ()
@@ -110,4 +109,4 @@
   (:doctype ()
     (:html ()
       (:body ()
-	(:form (:action :__self__))))))
+	(:form (:action :__self__))))))|#
