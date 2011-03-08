@@ -7,19 +7,8 @@
 
 (in-package :(% TMPL_VAR APPLICATION_NAME %).view)
 
-;; abow code can/should be inserted dynamically
-
-#|(defcontroller index-page/get (:uri "/test0/" :view "index-page")
-  ((msg "This is message from client"))
-  (let ((page-title "PAGE-TITLE")
-	(text "TEXT")
-	(messages '((:good-message? t :message "message1") (:good-message? nil :message "message2"))))
-    (list :page-title page-title
-	  :text text
-	  :messages messages)))|#
-
-(let ((easyweb::*application-name* "app1"))
-  (easyweb::defview index-page/get :url-pattern (:prefix "") 
+(let ((easyweb::*application-name* "(% TMPL_VAR APPLICATION_NAME %)"))
+  (easyweb::defview index-page/get :url-pattern (:prefix "/") 
 		    ()
 		    (:doctype ()
 		      (:html ()
@@ -37,76 +26,37 @@
 			    "For more information, go on and jump into "
 			    (:a (:href "http://localhost/le-jango/docs.html")
 			      "tutorials")
-			    " page."))))))
+			    " page.")))))
 
-#|(defview index-page/post ((msg "asdr"))
-  (:doctype ()
-    (:html ()
-      (:head ()
-	(:title ()
-	  "Welcome to le-jango project!"))
-      (:body (:font-color "green")
-	(:p ()
-	  (:h2 ()
-	    "Hello, world! le-jango is working...")
-	  (:h4 ()
-	    "POST: "
-	    msg))
-	(:p ()
-	  (:br ())
-	  "For more information, go on and jump into "
-	  (:a (:href "http://localhost/le-jango/docs.html")
-	      "tutorials")
-	  " page.")))))
-
-(defview open-link ((link "http://localhost:8000/"))
-  (:doctype ()
-    (:html ()
-      (:head ()
-	(:title ()
-	  "Links..."))
-      (:body ()
-	(:a (:href link)
-	  "the link")))))
-
-(defview mervecigim ()
-  (:html ()
-    (:head ()
-      (:script (:type "text/javascript")
-	"function upper() { "
-	"  key = window.event.keyCode;"
-	"  window.event.keyCode = key-32; "
-	"}"))
-    (:body ()
-      (:form ()
-	     (:input (:type "text" 
-			    :onkeyup "javascript:this.value=this.value.toUpperCase();"))))))
-
-(defview argtest ((arg0 "arg0") arg1 (arg2 123))
-  (:html ()
-    (:body ()
-      (:p ()
-	(let ((ret ""))
-	  (loop for arg in arguments
-	     do (setf ret (format nil "~A~A" ret (:h3 () arg))))
-	  ret))
-      (:p ()
-	"Request Method: "
-	(request-method *request*)))))
-
-(defview form ((url "/pap1/"))
-  (:doctype ()
-    (:html ()
-      (:body ()
-	(:form (:action url
-		:method :post)
-	  (:input (:type "textfield"
-		   :name "msg"))
-	  (:input (:type "submit"
-		   :value "send")))))))
-
-(defview template1/get ()
-  (:doctype ()
-    (:html ()
-      (:body ()
-	(:form (:action :__self__))))))|#
+  (easyweb::defview index-page/post :url-pattern (:prefix "/")
+		    ((msg "asdr"))
+		    (:doctype ()
+			      (:html ()
+				     (:head ()
+					    (:title ()
+						    "Welcome to le-jango project!"))
+				     (:body (:font-color "green")
+					    (:p ()
+						(:h2 ()
+						     "Hello, world! le-jango is working...")
+						(:h4 ()
+						     "POST: "
+						     msg))
+					    (:p ()
+						(:br ())
+						"For more information, go on and jump into "
+						(:a (:href "http://localhost/le-jango/docs.html")
+						    "tutorials")
+						" page.")))))
+  
+  (easyweb::defview form :url-pattern (:absolute "/form")
+		    ((url "/test3/"))
+		    (:doctype ()
+			      (:html ()
+				     (:body ()
+					    (:form (:action url
+							    :method :post)
+						   (:input (:type "textfield"
+								  :name "msg"))
+						   (:input (:type "submit"
+								  :value "send"))))))))

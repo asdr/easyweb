@@ -16,12 +16,10 @@
      
      (cl:export ',name cl:*package*)))|#
 
-(defmacro defview (name &rest rest &key url-pattern)
-  (let ((args (third rest))
-	(body (fourth rest)))
-    (format t "~S~%~S~%~S~%" name args body)
+(defmacro defview (name &rest rest &key url-pattern (arguments nil))
+    ;(format t "~S~%~S~%~S~%" name arguments body)
     (if (and (listp url-pattern)
-	     (listp args)) ;; the first element of body must include list of arguments
+	     (listp arguments)) ;; the first element of body must include list of arguments
 	`(progn
 	   
 	   (defun ,name (,@(let ((ret (mapcar #'(lambda(arg)
@@ -29,12 +27,12 @@
 						    (setf (cadr arg)
 							  (enclose-string (format nil "~A" (cadr arg)))))
 						  arg)
-					      args)))
+					      arguments)))
 				(when ret
 				  (push '&key ret))))
-	     (,@body))
+	     ,@(nthcdr 4 rest))
 
 	   (cl:export ',name)
 	   
-	   (define-url-patterns "/"
-	     (,url-pattern ,name))))))
+	   (define-url-patterns ""
+	     (,url-pattern ,name)))))
