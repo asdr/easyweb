@@ -16,8 +16,8 @@
      
      (cl:export ',name cl:*package*)))|#
 
-(defmacro defview (name &rest rest &key url-pattern (arguments nil))
-    (format t "~S~%~S~%~S~%" name arguments (nthcdr 4 rest))
+(defmacro defview (name &body rest &key url-pattern (arguments nil) &allow-other-keys)
+    ;(format t "~S~%~S~%~S~%" name arguments (nthcdr 4 rest))
     (if (and (listp url-pattern)
 	     (listp arguments)) ;; the first element of body must include list of arguments
 	`(progn
