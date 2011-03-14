@@ -71,22 +71,31 @@
 (defmacro define-url-patterns (prefix &body body)
   `(progn
      ,@(mapcar #'(lambda(mapping)
-		   (map-one-pattern mapping prefix *acceptor-name*))
+		   (map-one-pattern mapping prefix))
 	       body)))
 
-(defun map-one-pattern (mapping prefix acceptor-name)
+(defun map-one-pattern (mapping prefix)
   (let ((uri (car mapping)))
     (let ((uri-type (car uri))
 	  (uri-content (format nil "~A~A" prefix (cadr uri)))
-	  (handler (cadr mapping)))
-      `(define-url-handler (,handler :uri ,(cons uri-type uri-content))))))
+	  (handler (cadr mapping))
+	  (request-type (or (caddr mapping)
+			    :BOTH)))
+      `(define-url-handler (,handler :uri ,(cons uri-type uri-content) :default-request-type ,request-type)))))
 
 (defmacro define-url-handler (description)
   (when (atom description)
     (setq description (list description)))
   (destructuring-bind (name &key uri
                             (default-parameter-type ''string)
-                            (default-request-type :both))
+                            (default-request-type (cond ((eq (search "##get" name :test #'string-equal)
+							     (- (length name) 4))
+							 :GET)
+							((eq (search "##post" name :test #'string-equal)
+							     (- (length name) 5))
+							 :POST)
+							(t 
+							 :BOTH))))
       description
     `(let ((context (loop for app in *application-contexts*
 		       when (string= (context-name app) *application-name*)

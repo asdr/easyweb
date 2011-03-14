@@ -24,4 +24,4 @@
 
 	 ;;map url-pattern to dispatcher function
 	 (define-url-patterns ""
-	   (,url-pattern ,name)))))
+	   (,url-pattern ,name ,request-type)))))
