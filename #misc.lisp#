@@ -1,10 +1,6 @@
 (in-package :easyweb)
 
-(defmacro defview (name 
-		   &key url-pattern 
-		        (request-type :get) 
-		        (defun '(() (format nil "default view"))) 
-		   &allow-other-keys)
+(defmacro defview (name &key url-pattern (request-type :get) (defun '(() (format nil "default view"))) &allow-other-keys)
   (if (and (listp url-pattern)
 	   (listp (car defun))) ;; the first element of body must include list of arguments
       
@@ -25,7 +21,7 @@
 	 
 	 ;;export dispatcher function
 	 (cl:export ',name)
-	 
+
 	 ;;map url-pattern to dispatcher function
 	 (define-url-patterns ""
 	   (,url-pattern ,name ,request-type)))))

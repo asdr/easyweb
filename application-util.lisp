@@ -55,7 +55,7 @@
 							     name 
 							     "." 
 							     type)
-						easyweb.settings:+default-application-dir+))
+						*template-application-dir*))
 		      (of-path (progn 
 				 (when (string= type "asd")
 				   (setf name application-name))
