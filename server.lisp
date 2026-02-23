@@ -29,7 +29,7 @@
   (let ((key (easy-starter-hash address port))) 
     (or (gethash key *acceptor-table*)
 	(setf (gethash key *acceptor-table*)
-	      (make-easy-starter :acceptor (make-instance 'hunchentoot:acceptor 
+	      (make-easy-starter :acceptor (make-instance 'hunchentoot:easy-acceptor
 							  :address address
 							  :port port
 							  :name key))))))
@@ -38,7 +38,7 @@
 
 
 (defun get-acceptor (&key (port *listen-port*) (address *listen-address*))
-  (let ((starter (get-easy-starter address port)))
+  (let ((starter (get-easy-starter :address address :port port)))
     (when starter
       (easy-starter-acceptor starter))))
 

@@ -1,6 +1,7 @@
 (in-package :easyweb)
 
 (defparameter *acceptor-name* nil)
+(defparameter *application-name* nil)
 (defparameter *application-contexts* nil)
 
 (defstruct (application-context
